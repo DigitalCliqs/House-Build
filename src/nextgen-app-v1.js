@@ -5,7 +5,6 @@ import { createAnamarijaArchitectureShell } from './architecture-shell-v1.js';
 import { createPremiumOpenPlanZone } from './premium-zone-v1.js';
 import { createPremiumLighting } from './premium-lighting-v1.js';
 import { applyProductionMaterialPass } from './production-material-pass-v1.js';
-import { createRenderQualityV46 } from './render-quality-v46.js';
 import { createHeroInterior } from './hero-interior-v1.js';
 import { createHeroFinishV40 } from './hero-finish-v40.js';
 import { createHeroZoneV42 } from './hero-zone-v42.js';
@@ -26,6 +25,8 @@ const qa=reportArchitectureAudit(auditArchitecture(ARCHITECTURE_SPEC));
 if(!qa.ok){statusEl.style.display='block';statusEl.textContent='Architecture QA found an envelope error — see console';}
 
 const isTouch=matchMedia('(pointer: coarse)').matches||navigator.maxTouchPoints>0;
+const isMobileViewport=matchMedia('(max-width: 900px)').matches;
+const mobileSafe=isTouch||isMobileViewport;
 let mobileActive=false;
 if(isTouch)enterBtn.textContent='Enter';
 
@@ -36,7 +37,7 @@ const camera=new THREE.PerspectiveCamera(67,innerWidth/innerHeight,.04,180);
 camera.position.set(.5,1.65,7.15);
 camera.rotation.order='YXZ';
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setPixelRatio(Math.min(devicePixelRatio,mobileSafe?1.25:2));
 renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -62,7 +63,7 @@ controls.addEventListener('unlock',()=>statusEl.textContent='Choose a room or en
 const sun=new THREE.DirectionalLight(0xfff0d8,3);
 sun.position.set(-11,16,9);
 sun.castShadow=true;
-sun.shadow.mapSize.set(2048,2048);
+sun.shadow.mapSize.set(mobileSafe?1024:2048,mobileSafe?1024:2048);
 sun.shadow.camera.left=-26;
 sun.shadow.camera.right=26;
 sun.shadow.camera.top=26;
@@ -79,7 +80,24 @@ createPrivateRoomDetail({THREE,scene});
 const premiumLighting=createPremiumLighting({THREE,scene,renderer});
 createPoolGardenDetail({THREE,scene});
 premiumLighting.root.traverse(o=>{if(o.isLight)o.userData.v40BaseIntensity=o.intensity});
-const renderQuality=createRenderQualityV46({THREE,renderer,scene,camera,sun});
+
+let renderQuality={
+  setMode(){},
+  render(){renderer.render(scene,camera)},
+  resize(w,h){renderer.setSize(w,h)},
+  dispose(){}
+};
+if(!mobileSafe){
+  try{
+    const {createRenderQualityV46}=await import('./render-quality-v46.js');
+    renderQuality=createRenderQualityV46({THREE,renderer,scene,camera,sun});
+  }catch(e){
+    console.warn('Cinematic post-processing unavailable; using direct renderer',e);
+  }
+}else{
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  statusEl.textContent='Mobile renderer ready';
+}
 
 applyProductionMaterialPass({THREE,scene,renderer}).then(()=>{
   scene.traverse(o=>{if(!o.isMesh||!o.material)return;const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms){if('envMapIntensity'in m&&/glass|glazing|slider|island|stone|bronze|oven|pool|water|v45:|v42:/i.test(o.name||''))m.envMapIntensity=Math.max(m.envMapIntensity||0,1.25)}});
@@ -97,7 +115,7 @@ async function loadRuntimeRegistry(){
 
 const registry=await loadRuntimeRegistry().catch(e=>{assetEl.textContent='asset registry unavailable';console.error(e);return{raw:{},paths:{}}});
 const productionAssets=createProductionAssetLayer({THREE,scene,GLTFLoader,registry:registry.raw,onStatus:e=>{if(e.state==='error')console.warn('Production model failed',e)}});
-productionAssets.ready.then(items=>{const loaded=items.filter(Boolean).length;if(loaded)assetEl.textContent=`${loaded} hero placements loaded · cinematic scene`});
+productionAssets.ready.then(items=>{const loaded=items.filter(Boolean).length;if(loaded)assetEl.textContent=`${loaded} hero placements loaded · ${mobileSafe?'mobile':'cinematic'} scene`});
 const engine=createAnamarijaNextgenEngine({THREE,GLTFLoader,scene,camera,renderer,controls,assetRegistry:registry.paths,strictAssets:true,strictMaterials:false,onAssetStatus:e=>{if(e.state==='error')console.warn('Asset load failed',e)}});
 
 let viewMode='walking';
@@ -137,7 +155,7 @@ function applyTimeOfDay(mode){
   sun.intensity=p.sun;
   premiumLighting.root.traverse(o=>{if(o.isLight&&Number.isFinite(o.userData.v40BaseIntensity))o.intensity=o.userData.v40BaseIntensity*p.premium});
   renderQuality.setMode(mode);
-  statusEl.textContent=`${mode[0].toUpperCase()+mode.slice(1)} cinematic lighting`;
+  statusEl.textContent=`${mode[0].toUpperCase()+mode.slice(1)} ${mobileSafe?'mobile':'cinematic'} lighting`;
 }
 timeEl?.addEventListener('change',()=>applyTimeOfDay(timeEl.value));
 applyTimeOfDay(timeEl?.value||'day');
@@ -184,7 +202,7 @@ function updateMovement(delta){
 }
 function animate(){requestAnimationFrame(animate);const delta=clock.getDelta();updateMovement(delta);renderQuality.render(delta)}
 animate();
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderQuality.resize(innerWidth,innerHeight)});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,mobileSafe?1.25:2));renderQuality.resize(innerWidth,innerHeight)});
 const wsUrl=new URLSearchParams(location.search).get('ws');
 if(wsUrl?.startsWith('wss://')||wsUrl?.startsWith('ws://localhost'))engine.connect(wsUrl,s=>console.log('live scene',s));
-if(qa.ok)statusEl.textContent=isTouch?'Choose a room or tap Enter':'Choose a room or enter the walkthrough';
+if(qa.ok)statusEl.textContent=isTouch?'Tap Enter to move · drag the scene to look around':'Choose a room or enter the walkthrough';
