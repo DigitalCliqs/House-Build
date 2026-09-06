@@ -1,6 +1,7 @@
 // V42 reference-led kitchen/living refinement for the enlarged Anamarija hero route.
 import { createTerracePoolV42 } from './terrace-pool-v42.js';
 import { createProductionRealismV43 } from './production-realism-v43.js';
+import { createHeroFurnitureV45 } from './hero-furniture-v45.js';
 export function createHeroZoneV42({THREE,scene}={}){
  if(!THREE||!scene)throw new Error('THREE and scene are required');
  const root=new THREE.Group();root.name='hero-zone-v42';scene.add(root);
@@ -50,6 +51,7 @@ export function createHeroZoneV42({THREE,scene}={}){
  box('v42:living-cove-strip',[5.18,3.75,2.16],[7.15,.025,.025],warm,false);
  const terracePool=createTerracePoolV42({THREE,scene});
  const productionRealism=createProductionRealismV43({THREE,scene});
- root.userData.pass='v43-kitchen-living-terrace-pool-realism';
- return{root,terracePool,productionRealism,dispose(){productionRealism.dispose();terracePool.dispose();root.traverse(n=>n.geometry?.dispose?.());mats.forEach(m=>m.dispose());scene.remove(root)}};
+ const heroFurniture=createHeroFurnitureV45({THREE,scene});
+ root.userData.pass='v45-kitchen-living-dining-terrace-pool-realism';
+ return{root,terracePool,productionRealism,heroFurniture,dispose(){heroFurniture.dispose();productionRealism.dispose();terracePool.dispose();root.traverse(n=>n.geometry?.dispose?.());mats.forEach(m=>m.dispose());scene.remove(root)}};
 }
