@@ -5,6 +5,7 @@ import { createAnamarijaArchitectureShell } from './architecture-shell-v1.js';
 import { createPremiumOpenPlanZone } from './premium-zone-v1.js';
 import { createPremiumLighting } from './premium-lighting-v1.js';
 import { applyProductionMaterialPass } from './production-material-pass-v1.js';
+import { createRenderQualityV46 } from './render-quality-v46.js';
 import { createHeroInterior } from './hero-interior-v1.js';
 import { createHeroFinishV40 } from './hero-finish-v40.js';
 import { createHeroZoneV42 } from './hero-zone-v42.js';
@@ -78,8 +79,11 @@ createPrivateRoomDetail({THREE,scene});
 const premiumLighting=createPremiumLighting({THREE,scene,renderer});
 createPoolGardenDetail({THREE,scene});
 premiumLighting.root.traverse(o=>{if(o.isLight)o.userData.v40BaseIntensity=o.intensity});
+const renderQuality=createRenderQualityV46({THREE,renderer,scene,camera,sun});
 
-applyProductionMaterialPass({THREE,scene,renderer}).catch(e=>console.warn('PBR material pass fallback',e));
+applyProductionMaterialPass({THREE,scene,renderer}).then(()=>{
+  scene.traverse(o=>{if(!o.isMesh||!o.material)return;const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms){if('envMapIntensity'in m&&/glass|glazing|slider|island|stone|bronze|oven|pool|water|v45:|v42:/i.test(o.name||''))m.envMapIntensity=Math.max(m.envMapIntensity||0,1.25)}});
+}).catch(e=>console.warn('PBR material pass fallback',e));
 
 async function loadRuntimeRegistry(){
   const r=await fetch('./assets/asset-registry.json',{cache:'no-store'});
@@ -93,7 +97,7 @@ async function loadRuntimeRegistry(){
 
 const registry=await loadRuntimeRegistry().catch(e=>{assetEl.textContent='asset registry unavailable';console.error(e);return{raw:{},paths:{}}});
 const productionAssets=createProductionAssetLayer({THREE,scene,GLTFLoader,registry:registry.raw,onStatus:e=>{if(e.state==='error')console.warn('Production model failed',e)}});
-productionAssets.ready.then(items=>{const loaded=items.filter(Boolean).length;if(loaded)assetEl.textContent=`${loaded} hero placements loaded · production scene`});
+productionAssets.ready.then(items=>{const loaded=items.filter(Boolean).length;if(loaded)assetEl.textContent=`${loaded} hero placements loaded · cinematic scene`});
 const engine=createAnamarijaNextgenEngine({THREE,GLTFLoader,scene,camera,renderer,controls,assetRegistry:registry.paths,strictAssets:true,strictMaterials:false,onAssetStatus:e=>{if(e.state==='error')console.warn('Asset load failed',e)}});
 
 let viewMode='walking';
@@ -121,9 +125,9 @@ function jumpTo(name){
 document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>jumpTo(btn.dataset.view)));
 
 const presentationPresets={
-  day:{bg:0xc9d4d8,fog:0xc9d4d8,exposure:1.08,sun:3,premium:1},
+  day:{bg:0xc9d4d8,fog:0xc9d4d8,exposure:1.05,sun:3,premium:1},
   evening:{bg:0x81786f,fog:0x81786f,exposure:.98,sun:1.25,premium:1.35},
-  night:{bg:0x1d2530,fog:0x1d2530,exposure:.82,sun:.18,premium:1.72},
+  night:{bg:0x1d2530,fog:0x1d2530,exposure:.88,sun:.18,premium:1.72},
 };
 function applyTimeOfDay(mode){
   const p=presentationPresets[mode]||presentationPresets.day;
@@ -132,7 +136,8 @@ function applyTimeOfDay(mode){
   renderer.toneMappingExposure=p.exposure;
   sun.intensity=p.sun;
   premiumLighting.root.traverse(o=>{if(o.isLight&&Number.isFinite(o.userData.v40BaseIntensity))o.intensity=o.userData.v40BaseIntensity*p.premium});
-  statusEl.textContent=`${mode[0].toUpperCase()+mode.slice(1)} presentation lighting`;
+  renderQuality.setMode(mode);
+  statusEl.textContent=`${mode[0].toUpperCase()+mode.slice(1)} cinematic lighting`;
 }
 timeEl?.addEventListener('change',()=>applyTimeOfDay(timeEl.value));
 applyTimeOfDay(timeEl?.value||'day');
@@ -177,9 +182,9 @@ function updateMovement(delta){
   intended.set(0,0,0).addScaledVector(forward,f).addScaledVector(right,r);if(intended.lengthSq()>1)intended.normalize();
   intended.multiplyScalar(speed*Math.min(delta,.05));engine.moveFirstPerson(intended,viewMode);
 }
-function animate(){requestAnimationFrame(animate);updateMovement(clock.getDelta());renderer.render(scene,camera)}
+function animate(){requestAnimationFrame(animate);const delta=clock.getDelta();updateMovement(delta);renderQuality.render(delta)}
 animate();
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderQuality.resize(innerWidth,innerHeight)});
 const wsUrl=new URLSearchParams(location.search).get('ws');
 if(wsUrl?.startsWith('wss://')||wsUrl?.startsWith('ws://localhost'))engine.connect(wsUrl,s=>console.log('live scene',s));
 if(qa.ok)statusEl.textContent=isTouch?'Choose a room or tap Enter':'Choose a room or enter the walkthrough';
