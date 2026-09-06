@@ -9,7 +9,7 @@
     html, body { margin:0; width:100%; height:100%; overflow:hidden; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#0d1014; }
     canvas { display:block; }
     #hud { position:fixed; inset:0; pointer-events:none; color:#fff; }
-    .panel { pointer-events:auto; position:absolute; top:16px; right:16px; width:min(330px,calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto; background:rgba(14,17,22,.78); backdrop-filter:blur(18px); border:1px solid rgba(255,255,255,.13); border-radius:18px; padding:16px; box-shadow:0 18px 60px rgba(0,0,0,.28); }
+    .panel { pointer-events:auto; position:absolute; top:16px; right:16px; width:min(340px,calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto; background:rgba(14,17,22,.78); backdrop-filter:blur(18px); border:1px solid rgba(255,255,255,.13); border-radius:18px; padding:16px; box-shadow:0 18px 60px rgba(0,0,0,.28); }
     .title { font-weight:760; font-size:17px; letter-spacing:-.01em; margin-bottom:4px; }
     .sub { opacity:.7; font-size:12px; line-height:1.45; margin-bottom:14px; }
     .section { margin-top:14px; padding-top:13px; border-top:1px solid rgba(255,255,255,.10); }
@@ -19,23 +19,22 @@
     button, select, input[type=range] { width:100%; box-sizing:border-box; }
     button, select { background:rgba(255,255,255,.94); color:#101318; border:0; border-radius:10px; padding:9px 10px; font-weight:700; cursor:pointer; }
     button.secondary { background:rgba(255,255,255,.10); color:#fff; border:1px solid rgba(255,255,255,.12); }
-    button:hover { filter:brightness(.96); }
     label { font-size:12px; opacity:.82; min-width:78px; }
     input[type=range] { accent-color:#f2d2a2; }
     #crosshair { position:absolute; left:50%; top:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border:1px solid rgba(255,255,255,.8); border-radius:50%; display:none; box-shadow:0 0 10px rgba(0,0,0,.45); }
     #badge { position:absolute; bottom:18px; left:18px; background:rgba(14,17,22,.68); border:1px solid rgba(255,255,255,.10); backdrop-filter:blur(10px); padding:9px 12px; border-radius:11px; font-size:12px; }
     #sceneLabel { position:absolute; top:18px; left:18px; background:rgba(14,17,22,.58); border:1px solid rgba(255,255,255,.10); backdrop-filter:blur(10px); padding:9px 12px; border-radius:11px; font-size:12px; font-weight:650; }
     .value { min-width:44px; text-align:right; font-variant-numeric:tabular-nums; font-size:11px; opacity:.68; }
-    @media (max-width:700px){ .panel{top:10px;right:10px;width:min(300px,calc(100vw - 20px));padding:13px}.grid{grid-template-columns:1fr 1fr} #badge{left:10px;bottom:10px;max-width:calc(100vw - 20px)} #sceneLabel{left:10px;top:10px} }
+    @media (max-width:700px){ .panel{top:10px;right:10px;width:min(305px,calc(100vw - 20px));padding:13px}.grid{grid-template-columns:1fr 1fr} #badge{left:10px;bottom:10px;max-width:calc(100vw - 20px)} #sceneLabel{left:10px;top:10px} }
   </style>
 </head>
 <body>
   <div id="hud">
     <div id="crosshair"></div>
-    <div id="sceneLabel">Finished concept · EuroMax accessible villa</div>
+    <div id="sceneLabel">Finished concept v2 · EuroMax accessible villa + landscaped yard</div>
     <div class="panel">
       <div class="title">Anamarija EuroMax — Finished Walkthrough</div>
-      <div class="sub">A first-person visualisation of the premium single-storey concept: high ceilings, panoramic glazing, marble and oak finishes, architectural lighting, accessible circulation, terrace, landscaped garden and 8 × 4 m pool.</div>
+      <div class="sub">Interactive finished-product visualisation: high ceilings, panoramic glazing, Calacatta-style marble, oak herringbone, architectural lighting, accessible circulation, landscaped ~1,200 m² plot, terrace/pergola and an 8 × 4 m pool.</div>
       <div class="row"><button id="enter">Enter first-person walkthrough</button></div>
 
       <div class="section">
@@ -46,9 +45,11 @@
       </div>
 
       <div class="section">
-        <div class="section-title">Atmosphere</div>
+        <div class="section-title">Atmosphere & automation</div>
         <div class="row"><label>Time</label><input id="time" type="range" min="0" max="24" step="0.25" value="18.5" /><span id="timeValue" class="value">18:30</span></div>
         <div class="row"><label>Lighting</label><select id="mood"><option value="auto">Auto</option><option value="day">Bright day</option><option value="evening">Evening mood</option><option value="night">Night</option></select></div>
+        <div class="row"><label>Doors</label><select id="doors"><option value="closed">Closed</option><option value="open">Open all</option></select></div>
+        <div class="row"><label>Blinds</label><select id="blinds"><option value="open">Open</option><option value="closed">Closed</option></select></div>
         <div class="row"><label>Pool cover</label><select id="poolCover"><option value="open">Open</option><option value="closed">Closed</option></select></div>
       </div>
 
@@ -64,8 +65,8 @@
         </div>
       </div>
     </div>
-    <div id="badge">WASD move · Mouse look · Shift faster · Esc release · use “Go to” for instant room changes</div>
+    <div id="badge">WASD move · Mouse look · Shift faster · Esc release · double-click a nearby door to toggle</div>
   </div>
-  <script type="module" src="./src/main.js"></script>
+  <script type="module" src="./src/viewer-v2.js"></script>
 </body>
 </html>
