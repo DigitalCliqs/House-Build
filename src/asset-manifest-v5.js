@@ -1,13 +1,13 @@
 // High-fidelity asset slots for the Anamarija EuroMax walkthrough.
-// Put the downloaded GLB files at the local paths below. All recommended
-// Poly Haven assets are CC0. Local files keep the walkthrough fast and avoid
-// relying on a third-party API at runtime.
+// Run `node scripts/fetch-polyhaven-assets.mjs` to download the CC0 assets.
+// The loader keeps working even when some files are unavailable.
 
 export const ASSET_MANIFEST = [
   {
     id: 'living-cabinet',
     label: 'Modern wooden cabinet',
-    path: './assets/models/modern_wooden_cabinet.glb',
+    polyhavenId: 'modern_wooden_cabinet',
+    path: './assets/models/modern_wooden_cabinet/scene.gltf',
     source: 'https://polyhaven.com/a/modern_wooden_cabinet',
     license: 'CC0',
     position: [8.15, 0, -1.0],
@@ -15,9 +15,65 @@ export const ASSET_MANIFEST = [
     scale: 1.0,
   },
   {
+    id: 'living-armchair',
+    label: 'Modern arm chair 01',
+    polyhavenId: 'modern_arm_chair_01',
+    path: './assets/models/modern_arm_chair_01/scene.gltf',
+    source: 'https://polyhaven.com/a/modern_arm_chair_01',
+    license: 'CC0',
+    position: [3.55, 0, -1.55],
+    rotation: [0, 0.55, 0],
+    scale: 1.0,
+  },
+  {
+    id: 'living-coffee-table',
+    label: 'Round stone coffee table',
+    polyhavenId: 'coffee_table_round_01',
+    path: './assets/models/coffee_table_round_01/scene.gltf',
+    source: 'https://polyhaven.com/a/coffee_table_round_01',
+    license: 'CC0',
+    position: [4.95, 0, -2.30],
+    rotation: [0, 0, 0],
+    scale: 1.0,
+  },
+  {
+    id: 'living-coffee-table-2',
+    label: 'Modern coffee table 01',
+    polyhavenId: 'modern_coffee_table_01',
+    path: './assets/models/modern_coffee_table_01/scene.gltf',
+    source: 'https://polyhaven.com/a/modern_coffee_table_01',
+    license: 'CC0',
+    position: [5.85, 0, -2.35],
+    rotation: [0, Math.PI / 2, 0],
+    scale: 0.78,
+  },
+  {
+    id: 'dining-chair-a',
+    label: 'Dining chair 02',
+    polyhavenId: 'dining_chair_02',
+    path: './assets/models/dining_chair_02/scene.gltf',
+    source: 'https://polyhaven.com/a/dining_chair_02',
+    license: 'CC0',
+    position: [5.75, 0, 0.55],
+    rotation: [0, Math.PI / 2, 0],
+    scale: 1.0,
+  },
+  {
+    id: 'dining-chair-b',
+    label: 'Dining chair 02',
+    polyhavenId: 'dining_chair_02',
+    path: './assets/models/dining_chair_02/scene.gltf',
+    source: 'https://polyhaven.com/a/dining_chair_02',
+    license: 'CC0',
+    position: [7.55, 0, 0.55],
+    rotation: [0, -Math.PI / 2, 0],
+    scale: 1.0,
+  },
+  {
     id: 'plant-living',
     label: 'Potted plant 01',
-    path: './assets/models/potted_plant_01.glb',
+    polyhavenId: 'potted_plant_01',
+    path: './assets/models/potted_plant_01/scene.gltf',
     source: 'https://polyhaven.com/a/potted_plant_01',
     license: 'CC0',
     position: [7.7, 0, -3.0],
@@ -27,7 +83,8 @@ export const ASSET_MANIFEST = [
   {
     id: 'plant-terrace',
     label: 'Potted plant 01',
-    path: './assets/models/potted_plant_01.glb',
+    polyhavenId: 'potted_plant_01',
+    path: './assets/models/potted_plant_01/scene.gltf',
     source: 'https://polyhaven.com/a/potted_plant_01',
     license: 'CC0',
     position: [1.75, 0, -6.9],
@@ -37,7 +94,8 @@ export const ASSET_MANIFEST = [
   {
     id: 'groundcover-pool',
     label: 'Crystalline iceplant',
-    path: './assets/models/crystalline_iceplant.glb',
+    polyhavenId: 'crystalline_iceplant',
+    path: './assets/models/crystalline_iceplant/scene.gltf',
     source: 'https://polyhaven.com/a/crystalline_iceplant',
     license: 'CC0',
     position: [10.8, 0, -11.6],
@@ -46,4 +104,4 @@ export const ASSET_MANIFEST = [
   },
 ];
 
-export const ASSET_CREDIT = 'Optional high-detail assets: Poly Haven (CC0).';
+export const ASSET_CREDIT = 'High-detail models: Poly Haven (CC0).';
