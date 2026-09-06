@@ -1,0 +1,88 @@
+name: Ingest verified Poly Haven assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      asset_id:
+        description: 'Verified Poly Haven asset ID (for example modern_arm_chair_01)'
+        required: true
+        type: string
+      destination:
+        description: 'Repository directory under assets/models/'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Resolve and download official glTF package
+        env:
+          ASSET_ID: ${{ inputs.asset_id }}
+          DESTINATION: ${{ inputs.destination }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, pathlib, re, urllib.request
+
+          asset_id=os.environ['ASSET_ID'].strip()
+          destination=os.environ['DESTINATION'].strip().strip('/')
+          if not re.fullmatch(r'[A-Za-z0-9_.-]+', asset_id):
+              raise SystemExit('Invalid asset_id')
+          if not re.fullmatch(r'[A-Za-z0-9_./-]+', destination) or '..' in destination:
+              raise SystemExit('Invalid destination')
+          out=pathlib.Path('assets/models')/destination
+          out.mkdir(parents=True,exist_ok=True)
+          req=urllib.request.Request(f'https://api.polyhaven.com/files/{asset_id}',headers={'User-Agent':'AnamarijaHouseBuild/1.0 (DigitalCliqs/House-Build)'})
+          with urllib.request.urlopen(req,timeout=30) as r:
+              files=json.load(r)
+
+          # Prefer the smallest glTF variant exposed by the official API; download its declared dependencies too.
+          candidates=[]
+          def walk(node,path=()):
+              if isinstance(node,dict):
+                  if isinstance(node.get('url'),str): candidates.append((path,node))
+                  for k,v in node.items(): walk(v,path+(str(k),))
+              elif isinstance(node,list):
+                  for i,v in enumerate(node): walk(v,path+(str(i),))
+          walk(files)
+          gltfs=[(p,n) for p,n in candidates if n['url'].lower().split('?')[0].endswith(('.gltf','.glb'))]
+          if not gltfs:
+              raise SystemExit('Official API returned no glTF/GLB file for this asset')
+          p,primary=min(gltfs,key=lambda x:int(x[1].get('size') or 10**18))
+          manifest=[]
+          seen=set()
+          def download(entry):
+              url=entry.get('url');
+              if not url or url in seen:return
+              seen.add(url)
+              name=pathlib.Path(urllib.parse.unquote(urllib.parse.urlparse(url).path)).name
+              target=out/name
+              req=urllib.request.Request(url,headers={'User-Agent':'AnamarijaHouseBuild/1.0 (DigitalCliqs/House-Build)'})
+              with urllib.request.urlopen(req,timeout=120) as r: data=r.read()
+              md5=hashlib.md5(data).hexdigest()
+              expected=entry.get('md5')
+              if expected and md5.lower()!=expected.lower(): raise SystemExit(f'MD5 mismatch for {name}')
+              target.write_bytes(data)
+              manifest.append({'file':name,'bytes':len(data),'md5':md5,'source':url})
+              for dep in entry.get('include',[]) if isinstance(entry.get('include'),list) else []:
+                  if isinstance(dep,dict): download(dep)
+          import urllib.parse
+          download(primary)
+          (out/'polyhaven-source.json').write_text(json.dumps({'assetId':asset_id,'api':'https://api.polyhaven.com','license':'CC0','selectedPath':p,'files':manifest},indent=2)+'\n')
+          print(json.dumps(manifest,indent=2))
+          PY
+      - name: Commit downloaded asset
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/models/
+          git diff --cached --quiet && exit 0
+          git commit -m "Ingest Poly Haven asset ${{ inputs.asset_id }}"
+          git push
