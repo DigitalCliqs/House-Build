@@ -4,18 +4,18 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
 <meta name="theme-color" content="#0d1014" />
-<title>Anamarija Mobile Walkthrough</title>
+<title>Domprojekt Anamarija · Mobile Walkthrough</title>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/"}}</script>
 <style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d1014;font-family:Inter,system-ui,sans-serif;color:#fff;touch-action:none}canvas{display:block;position:fixed;inset:0}.panel{position:fixed;z-index:2147483646;inset:10px;overflow:auto;background:#171a20;border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px;box-sizing:border-box;touch-action:pan-y}.title{font-size:21px;font-weight:800;margin-bottom:8px}.sub{font-size:13px;opacity:.72;line-height:1.4;margin-bottom:14px}.row{display:flex;gap:10px;align-items:center;margin:11px 0}.row label{min-width:88px;font-size:14px;opacity:.8}.row select,.row input,.row button,button{width:100%;box-sizing:border-box;min-height:50px;border:0;border-radius:12px;padding:10px 12px;font-size:16px;font-weight:700}.primary{background:#fff;color:#101318;min-height:58px}.secondary{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.14)}.section{border-top:1px solid rgba(255,255,255,.1);padding-top:13px;margin-top:13px}.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;font-weight:800;margin-bottom:6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}#crosshair{position:fixed;z-index:50;left:50%;top:50%;width:12px;height:12px;margin:-6px;border:2px solid #fff;border-radius:50%;display:none;pointer-events:none}#badge,#sceneLabel,#assetStatus{display:none!important}body.walking .panel{display:none}.loading{position:fixed;z-index:2147483645;inset:0;display:flex;align-items:center;justify-content:center;background:#0d1014;color:#fff;font-size:14px}.loading.hidden{display:none}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d1014;font-family:Inter,system-ui,sans-serif;color:#fff;touch-action:none}canvas{display:block;position:fixed;inset:0}.panel{position:fixed;z-index:2147483646;left:10px;right:10px;top:10px;max-height:calc(100dvh - 20px);overflow:auto;background:rgba(23,26,32,.94);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px;box-sizing:border-box;touch-action:pan-y;backdrop-filter:blur(14px)}.title{font-family:Georgia,serif;font-size:22px;font-weight:700;margin-bottom:6px}.sub{font-size:13px;opacity:.72;line-height:1.4;margin-bottom:14px}.row{display:flex;gap:10px;align-items:center;margin:11px 0}.row label{min-width:88px;font-size:14px;opacity:.8}.row select,.row input,.row button,button{width:100%;box-sizing:border-box;min-height:50px;border:0;border-radius:12px;padding:10px 12px;font-size:16px;font-weight:700}.primary{background:#ead3ad;color:#241f19;min-height:58px}.secondary{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.14)}.section{border-top:1px solid rgba(255,255,255,.1);padding-top:13px;margin-top:13px}.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;font-weight:800;margin-bottom:6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}#crosshair{position:fixed;z-index:50;left:50%;top:50%;width:12px;height:12px;margin:-6px;border:2px solid #fff;border-radius:50%;display:none;pointer-events:none}#badge,#sceneLabel,#assetStatus{display:none!important}body.walking .panel{display:none}.loading{position:fixed;z-index:2147483647;inset:0;display:flex;align-items:center;justify-content:center;background:#0d1014;color:#fff;font-size:14px;padding:24px;text-align:center}.loading.hidden{display:none}
 </style>
 </head>
 <body>
 <div id="crosshair"></div><div id="sceneLabel"></div><div id="badge"></div>
-<div class="loading" id="loading">Loading mobile walkthrough…</div>
+<div class="loading" id="loading">Loading dedicated mobile walkthrough…</div>
 <div class="panel">
-<div class="title">Anamarija EuroMax — Mobile Walkthrough</div>
-<div class="sub">Phone-optimised mode. It loads the stable core 3D house directly, without the heavier desktop visual/audit layers.</div>
+<div class="title">Domprojekt Anamarija</div>
+<div class="sub">~200 m² premium accessible concept · phone-optimised walkthrough</div>
 <div class="row"><button id="enter" class="primary">Enter walkthrough</button></div>
 <div class="section"><div class="section-title">Navigation</div>
 <div class="row"><label>Profile</label><select id="profile"><option value="walk">Walking</option><option value="wheelchair">Wheelchair</option></select></div>
@@ -31,16 +31,16 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d1014;fon
 </div>
 <script type="module">
 try{
-  await import('./src/mobile-preload-v7.js?v=14');
-  await import('./src/viewer-v4.js?v=14');
-  await import('./src/mobile-controls-v7.js?v=14');
-  const loading=document.getElementById('loading'); loading.classList.add('hidden');
+  await import('./src/mobile-preload-v7.js?v=48');
+  await import('./src/viewer-v4.js?v=48');
+  await import('./src/mobile-controls-v7.js?v=48');
+  const loading=document.getElementById('loading');loading.classList.add('hidden');
   const tele=document.getElementById('teleport');
-  if(tele && [...tele.options].some(o=>o.value==='Terrace')){tele.value='Terrace';tele.dispatchEvent(new Event('change'));}
-  const mood=document.getElementById('mood'); if(mood){mood.value='day';mood.dispatchEvent(new Event('change'));}
-  const doors=document.getElementById('doors'); if(doors){doors.value='open';doors.dispatchEvent(new Event('change'));}
+  if(tele && [...tele.options].some(o=>o.value==='Living')){tele.value='Living';tele.dispatchEvent(new Event('change'));}
+  const mood=document.getElementById('mood');if(mood){mood.value='day';mood.dispatchEvent(new Event('change'));}
+  const doors=document.getElementById('doors');if(doors){doors.value='open';doors.dispatchEvent(new Event('change'));}
   document.addEventListener('click',e=>{if(e.target?.id==='enter'){document.body.classList.add('walking');setTimeout(()=>{const mc=document.getElementById('mobileControls');if(mc){mc.style.visibility='visible';mc.style.pointerEvents='none';const joy=mc.querySelector('.joy'),buttons=mc.querySelector('.mobileButtons'),look=mc.querySelector('.lookZone');if(joy)joy.style.pointerEvents='auto';if(buttons)buttons.style.pointerEvents='auto';if(look)look.style.pointerEvents='auto';}},50);}});
-}catch(err){const l=document.getElementById('loading');l.textContent='Could not start 3D walkthrough. Reload this page once.';console.error(err);}
+}catch(err){const l=document.getElementById('loading');l.textContent='Mobile walkthrough failed to initialise: '+(err?.message||err);console.error(err);}
 </script>
 </body>
 </html>
