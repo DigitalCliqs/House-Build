@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anamarija EuroMax Digital Twin</title>
+  <style>
+    html, body { margin:0; width:100%; height:100%; overflow:hidden; font-family:Inter,system-ui,sans-serif; background:#111; }
+    canvas { display:block; }
+    #hud { position:fixed; inset:0; pointer-events:none; color:white; }
+    .panel { pointer-events:auto; position:absolute; top:16px; right:16px; width:280px; background:rgba(15,18,22,.82); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:14px; box-shadow:0 8px 30px rgba(0,0,0,.25); }
+    .title { font-weight:700; font-size:16px; margin-bottom:4px; }
+    .sub { opacity:.72; font-size:12px; line-height:1.35; margin-bottom:12px; }
+    .row { display:flex; gap:8px; margin:8px 0; align-items:center; }
+    button, select, input[type=range] { width:100%; }
+    button, select { background:#fff; color:#111; border:0; border-radius:9px; padding:9px 10px; font-weight:650; }
+    label { font-size:12px; opacity:.86; min-width:76px; }
+    #crosshair { position:absolute; left:50%; top:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border:1px solid rgba(255,255,255,.75); border-radius:50%; display:none; }
+    #badge { position:absolute; bottom:18px; left:18px; background:rgba(15,18,22,.72); padding:9px 12px; border-radius:10px; font-size:12px; }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <div id="crosshair"></div>
+    <div class="panel">
+      <div class="title">Anamarija EuroMax — Digital Twin</div>
+      <div class="sub">Milestone 1 spatial prototype. Geometry is approximate until the final dimensioned plan is loaded.</div>
+      <div class="row"><button id="enter">Enter walkthrough</button></div>
+      <div class="row"><label>Profile</label><select id="profile"><option value="walk">Walking</option><option value="wheelchair">Wheelchair</option></select></div>
+      <div class="row"><label>Turn circle</label><select id="turn"><option value="off">Off</option><option value="on">1.50 m overlay</option></select></div>
+      <div class="row"><label>Time</label><input id="time" type="range" min="0" max="24" step="0.25" value="14" /></div>
+    </div>
+    <div id="badge">WASD move · Mouse look · Shift faster · Esc release</div>
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
