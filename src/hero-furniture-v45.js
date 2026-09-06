@@ -8,7 +8,7 @@ export function createHeroFurnitureV45({THREE,scene}={}){
   // Hide lower-fidelity placeholders replaced by this pass.
   scene.traverse(o=>{
     const n=o.name||'';
-    if(/^v42:sofa-|^v43:cushion-|^dining-table-|^dining-leg$|^dining-chair-/.test(n))o.visible=false;
+    if(/^v42:sofa-|^v43:cushion-|^dining-table-|^dining-leg$|^dining-chair-|^island-stool-/.test(n))o.visible=false;
   });
 
   const fabric=new THREE.MeshPhysicalMaterial({color:0xeee7dd,roughness:.86,sheen:1,sheenColor:new THREE.Color(0xfff3e5),envMapIntensity:1.05});
@@ -37,7 +37,6 @@ export function createHeroFurnitureV45({THREE,scene}={}){
   rounded('v45:sofa-arm-left',[.20,.55,.94],[2.79,.62,-2.47],fabricShadow,.08,6);
   rounded('v45:sofa-arm-right',[.20,.55,1.70],[6.48,.62,-1.75],fabricShadow,.08,6);
   box('v45:sofa-shadow-plinth',[3.72,.10,1.02],[4.60,.18,-2.45],fabricShadow);
-  // Loose cushions with slight asymmetry.
   for(const [i,x,z,rz] of [[0,3.05,-2.61,.06],[1,4.03,-2.62,-.05],[2,5.05,-2.60,.04],[3,6.05,-2.08,-.07]]){
     const c=rounded(`v45:scatter-${i}`,[.64,.54,.16],[x,.92,z],fabric,.10,7);c.rotation.z=rz;
   }
@@ -72,7 +71,6 @@ export function createHeroFurnitureV45({THREE,scene}={}){
     rounded(`v45:oven-glass-${name}`,[.43,.35,.012],[9.34,y,4.984],glass,.018,5);
     cyl(`v45:oven-dial-${name}`, .025,.022,[9.13,y+.21,4.963],bronze,24).rotation.x=Math.PI/2;
   }
-  // Integrated fridge/freezer shadow lines and long bronze pull detail.
   box('v45:fridge-mid-reveal',[.58,.018,.018],[8.66,1.53,5.045],black);
   box('v45:fridge-pull',[.022,1.18,.028],[8.38,1.62,4.99],bronze);
   // Island seating: slim sculptural stools replacing basic blocks.
