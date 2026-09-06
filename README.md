@@ -2,38 +2,33 @@
 
 Interactive browser-based first-person walkthrough of the planned accessible premium ~200 m² EuroMax house near Velika Gorica, Croatia.
 
-## Current finished-concept scene — v4
+## Current finished-concept scene — v6 + high-detail asset pipeline
 
-The active viewer is now `src/viewer-v4.js`. It is aimed at looking and behaving like a finished luxury home rather than a bare architectural massing model.
+The active walkthrough combines the high-fidelity v4 scene, the articulated Anamarija-style roof/elevation layer, v6 reflection/façade refinements and an optional real-model asset pipeline.
 
-Current scene includes:
+Current scene includes high ceilings, panoramic glazing, animated blinds and tall doors, Calacatta-style marble, oak herringbone, detailed kitchen/bathrooms, architectural lighting, accessible circulation, landscaped ~1,200 m² plot, terrace/pergola, 8 × 4 m pool with animated cover, articulated multi-pitch roof, fascia/gutters/downpipes, deeper window reveals, stone feature cladding and guided presentation controls.
 
-- single-storey accessible layout based on the enlarged Anamarija concept
-- EuroMax / ultra-low-energy design intent
-- 2.8 m private-area ceilings, ~3.05 m principal ceilings and ~4.1 m raised living zone
-- tall architectural doors and enlarged entrance portal
-- large floor-to-ceiling panoramic glazing
-- animated motorised exterior blinds
-- white Calacatta-style marble-look porcelain with tile joint detail
-- oak herringbone-style flooring in bedrooms and office
-- detailed central built-in storage wall
-- upgraded fitted kitchen with tall appliance bank, wall cabinetry, island, sink/hob details and an accessible undercut work zone
-- more detailed dining and living furniture, media wall, feature slats and artwork
-- furnished bedrooms with layered bedding, wardrobes and side furniture
-- accessible wet room with marble wall treatment, roll-in shower, bench, WC, vanity, mirror and grab-rail details
-- ensuite / guest WC detailing
-- recessed, pendant, cove and warm architectural lighting
-- animated day/evening/night atmosphere
-- walking and wheelchair camera modes
-- visible wheelchair envelope plus optional 1.50 m turning-circle overlay
-- flush terrace, pergola and outdoor lounge
-- landscaped ~1,200 m² concept plot with driveway, front gate, parked car, privacy hedging, planting beds, shrubs and trees
-- 8 × 4 m pool, paved deck, animated water surface and electric slatted-cover visualisation
-- loungers, outdoor shower and pool-lift provision zone
-- room/garden teleport controls
-- animated tall internal/front doors
-- guided presentation tour and live specification panel
-- browser import map so Three.js addon imports resolve reliably
+## Install the real CC0 furniture / planting assets
+
+The project can now fetch its selected Poly Haven models automatically rather than requiring manual binary uploads.
+
+```bash
+node scripts/fetch-polyhaven-assets.mjs
+```
+
+The installer currently targets:
+
+- modern wooden cabinet
+- modern arm chair 01
+- round stone coffee table
+- modern coffee table 01
+- dining chair 02
+- potted plant 01
+- crystalline iceplant
+
+Downloaded files are placed under `assets/models/<polyhaven-id>/` and the walkthrough loads them automatically through `src/asset-manifest-v5.js`. If a file is absent, the procedural fallback scene remains functional.
+
+Poly Haven assets used by this project are CC0. The viewer keeps a visible Poly Haven credit.
 
 ## Run locally
 
@@ -66,17 +61,18 @@ Then open `http://localhost:8080`. VS Code Live Server also works.
 
 This is a **visual digital twin / design-development model**, not a certified architectural, structural, fire-safety or accessibility construction drawing. Final wall positions, structural spans, glazing sizes, door clear openings, MEP zones and furniture clearances must still be replaced with the final dimensioned Domprojekt/architect drawings before construction decisions are made.
 
-Core dimensions and room zones are kept in `src/house-config.js`. Presentation specifications are in `src/specifications.js`. The presentation layer is in `src/presentation-v3.js` and the active renderer is `src/viewer-v4.js`.
+Core dimensions and room zones are kept in `src/house-config.js`. Presentation specifications are in `src/specifications.js`. The presentation layer is `src/presentation-v3.js`; high-fidelity scene geometry is `src/viewer-v4.js`; roof/GLB integration is `src/viewer-bootstrap-v5.js`; and v6 visual refinement is layered above that.
 
 ## Technical stack
 
 - Three.js 0.169
 - browser-native ES modules + import map
-- PointerLockControls
+- PointerLockControls and GLTFLoader
 - procedural Calacatta-style marble, oak herringbone, stone and landscape materials
-- physical materials and ACES filmic tone mapping
+- physical materials, PMREM environment reflection and ACES filmic tone mapping
 - dynamic sun and practical lighting
 - animated doors, blinds, pool cover and water
+- optional local CC0 glTF furniture/vegetation assets
 - no backend required
 
 The MIT-licensed `ch-bas/threejs-sims-house-builder` remains a useful reference/base candidate for later editor functions such as interactive wall editing, plan import, measurements, saved layouts and GLB/glTF export.
@@ -84,9 +80,8 @@ The MIT-licensed `ch-bas/threejs-sims-house-builder` remains a useful reference/
 ## Next refinement milestones
 
 1. Replace concept wall geometry with the exact final dimensioned ~200 m² architectural plan.
-2. Match the final Domprojekt exterior elevations and roof geometry exactly.
-3. Replace procedural surfaces with exact selected Croatian product PBR textures/material properties.
-4. Replace approximate furniture/sanitaryware with exact-dimension selected products or licensed GLB assets.
+2. Match final Domprojekt elevations and roof geometry exactly from architect drawings.
+3. Replace remaining procedural surfaces with exact selected Croatian product PBR textures.
+4. Expand real-model coverage to sofas, sanitaryware, appliances, beds, wardrobes and more planting.
 5. Add true wheelchair swept-path, transfer-space and door-clearance validation.
-6. Add HDR environment lighting and higher-detail licensed/CC0 vegetation and furniture models.
-7. Add optional VR/WebXR mode and exportable cinematic camera paths.
+6. Add optional WebXR and exportable cinematic camera paths.
