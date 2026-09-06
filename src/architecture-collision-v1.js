@@ -1,70 +1,8 @@
 // Static collision registration generated from the canonical Anamarija architecture specification.
-// Visual shell and collision geometry now share the same source of truth.
-
 import { ARCHITECTURE_SPEC } from './architecture-spec-v1.js';
-
-function ordered(a, b) {
-  return a <= b ? [a, b] : [b, a];
-}
-
-function registerWall(collisionSystem, wall) {
-  const [a, b] = ordered(wall.a, wall.b);
-  if (wall.axis === 'x') {
-    return collisionSystem.setProxyBox(
-      `arch:${wall.id}`,
-      [a, 0, wall.fixed - wall.thickness / 2],
-      [b, wall.height, wall.fixed + wall.thickness / 2],
-      { kind: 'architecture' },
-    );
-  }
-  return collisionSystem.setProxyBox(
-    `arch:${wall.id}`,
-    [wall.fixed - wall.thickness / 2, 0, a],
-    [wall.fixed + wall.thickness / 2, wall.height, b],
-    { kind: 'architecture' },
-  );
-}
-
-function registerGlazing(collisionSystem, glazing) {
-  if (glazing.collision === false || glazing.axis !== 'x') return null;
-  const [a, b] = ordered(glazing.a, glazing.b);
-  const thickness = glazing.collisionThickness ?? 0.08;
-  return collisionSystem.setProxyBox(
-    `arch:glazing-${glazing.id}`,
-    [a, 0, glazing.fixed - thickness / 2],
-    [b, glazing.height, glazing.fixed + thickness / 2],
-    { kind: 'architecture' },
-  );
-}
-
-function addPoolEdge(collisionSystem, id, min, max) {
-  return collisionSystem.setProxyBox(`site:${id}`, min, max, { kind: 'hazard' });
-}
-
-export function registerAnamarijaArchitectureCollisions(collisionSystem, options = {}) {
-  if (!collisionSystem?.setProxyBox) throw new Error('collisionSystem with setProxyBox() is required');
-
-  for (const wall of ARCHITECTURE_SPEC.walls) registerWall(collisionSystem, wall);
-  for (const glazing of ARCHITECTURE_SPEC.glazing) registerGlazing(collisionSystem, glazing);
-
-  const POOL = ARCHITECTURE_SPEC.pool;
-  const poolHalfW = POOL.width / 2;
-  const poolHalfD = POOL.depth / 2;
-  const lip = options.poolBarrierThickness ?? 0.12;
-  const barrierHeight = options.poolBarrierHeight ?? 0.45;
-
-  addPoolEdge(collisionSystem, 'pool-north', [POOL.x - poolHalfW, 0, POOL.z + poolHalfD - lip / 2], [POOL.x + poolHalfW, barrierHeight, POOL.z + poolHalfD + lip / 2]);
-  addPoolEdge(collisionSystem, 'pool-south', [POOL.x - poolHalfW, 0, POOL.z - poolHalfD - lip / 2], [POOL.x + poolHalfW, barrierHeight, POOL.z - poolHalfD + lip / 2]);
-  addPoolEdge(collisionSystem, 'pool-west', [POOL.x - poolHalfW - lip / 2, 0, POOL.z - poolHalfD], [POOL.x - poolHalfW + lip / 2, barrierHeight, POOL.z + poolHalfD]);
-  addPoolEdge(collisionSystem, 'pool-east', [POOL.x + poolHalfW - lip / 2, 0, POOL.z - poolHalfD], [POOL.x + poolHalfW + lip / 2, barrierHeight, POOL.z + poolHalfD]);
-
-  const house = ARCHITECTURE_SPEC.house;
-  return {
-    north: house.z + house.depth / 2,
-    south: house.z - house.depth / 2,
-    west: -house.width / 2,
-    east: house.width / 2,
-    openings: ARCHITECTURE_SPEC.openings.map(opening => ({ ...opening })),
-    proxyIds: collisionSystem.listProxies().map(proxy => proxy.id).filter(id => id.startsWith('arch:') || id.startsWith('site:pool-')),
-  };
-}
+const ordered=(a,b)=>a<=b?[a,b]:[b,a];
+function setWallBox(cs,id,w,a,b){const base=w.base??0,top=base+w.height;if(w.axis==='x')return cs.setProxyBox(`arch:${id}`,[a,base,w.fixed-w.thickness/2],[b,top,w.fixed+w.thickness/2],{kind:'architecture'});return cs.setProxyBox(`arch:${id}`,[w.fixed-w.thickness/2,base,a],[w.fixed+w.thickness/2,top,b],{kind:'architecture'});}
+function registerWall(cs,w){let [a,b]=ordered(w.a,w.b);const cuts=ARCHITECTURE_SPEC.glazing.filter(g=>g.axis===w.axis&&Math.abs(g.fixed-w.fixed)<.12&&g.sill!=null).map(g=>ordered(g.a,g.b)).filter(([ga,gb])=>gb>a&&ga<b).sort((x,y)=>x[0]-y[0]);if(!cuts.length)return setWallBox(cs,w.id,w,a,b);let cursor=a,i=0;for(const [ga0,gb0] of cuts){const ga=Math.max(a,ga0),gb=Math.min(b,gb0);if(ga>cursor+.01)setWallBox(cs,`${w.id}:segment-${i++}`,w,cursor,ga);const g=ARCHITECTURE_SPEC.glazing.find(x=>x.axis===w.axis&&Math.abs(x.fixed-w.fixed)<.12&&Math.abs(Math.min(x.a,x.b)-ga0)<.01);if(g){if(g.sill>.01)setWallBox(cs,`${w.id}:${g.id}:sill`,{...w,height:g.sill},ga,gb);const head=g.sill+g.height;if(head<(w.base??0)+w.height-.01)setWallBox(cs,`${w.id}:${g.id}:head`,{...w,base:head,height:(w.base??0)+w.height-head},ga,gb);}cursor=Math.max(cursor,gb);}if(cursor<b-.01)setWallBox(cs,`${w.id}:segment-${i}`,w,cursor,b);}
+function registerGlazing(cs,g){if(g.collision===false)return null;const [a,b]=ordered(g.a,g.b),t=g.collisionThickness??.08,sill=g.sill??0,top=sill+g.height;if(g.axis==='x')return cs.setProxyBox(`arch:glazing-${g.id}`,[a,sill,g.fixed-t/2],[b,top,g.fixed+t/2],{kind:'architecture'});return cs.setProxyBox(`arch:glazing-${g.id}`,[g.fixed-t/2,sill,a],[g.fixed+t/2,top,b],{kind:'architecture'});}
+function addPoolEdge(cs,id,min,max){return cs.setProxyBox(`site:${id}`,min,max,{kind:'hazard'});}
+export function registerAnamarijaArchitectureCollisions(collisionSystem,options={}){if(!collisionSystem?.setProxyBox)throw new Error('collisionSystem with setProxyBox() is required');for(const w of ARCHITECTURE_SPEC.walls)registerWall(collisionSystem,w);for(const g of ARCHITECTURE_SPEC.glazing)registerGlazing(collisionSystem,g);const P=ARCHITECTURE_SPEC.pool,hw=P.width/2,hd=P.depth/2,lip=options.poolBarrierThickness??.12,h=options.poolBarrierHeight??.45;addPoolEdge(collisionSystem,'pool-north',[P.x-hw,0,P.z+hd-lip/2],[P.x+hw,h,P.z+hd+lip/2]);addPoolEdge(collisionSystem,'pool-south',[P.x-hw,0,P.z-hd-lip/2],[P.x+hw,h,P.z-hd+lip/2]);addPoolEdge(collisionSystem,'pool-west',[P.x-hw-lip/2,0,P.z-hd],[P.x-hw+lip/2,h,P.z+hd]);addPoolEdge(collisionSystem,'pool-east',[P.x+hw-lip/2,0,P.z-hd],[P.x+hw+lip/2,h,P.z+hd]);const house=ARCHITECTURE_SPEC.house;return{north:house.z+house.depth/2,south:house.z-house.depth/2,west:-house.width/2,east:house.width/2,openings:ARCHITECTURE_SPEC.openings.map(o=>({...o})),proxyIds:collisionSystem.listProxies().map(p=>p.id).filter(id=>id.startsWith('arch:')||id.startsWith('site:pool-'))};}
