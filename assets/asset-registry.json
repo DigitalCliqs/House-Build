@@ -1,14 +1,14 @@
 {
-  "metadata":{"projectId":"anamarija-euromax","version":"1.1.0","generatedBy":"manual-seed","notes":"Canonical runtime registry shared by frontend and LLM scene editor. Planned paths are not production assets until populated."},
+  "metadata":{"projectId":"anamarija-euromax","version":"1.2.0","generatedBy":"verified-source-pass","notes":"Canonical runtime registry. Only status=available is permitted into production scene; available-slot means source verified but repository binary not yet populated."},
   "models":{
-    "warm-ivory-sectional":{"path":"./assets/models/anamarija/warm-ivory-sectional.glb","status":"planned","type":"furniture","room":"living"},
-    "round-oak-stone-table":{"path":"./assets/models/coffee_table_round_01/scene.gltf","status":"available-slot","type":"furniture","room":"living"},
-    "modern-coffee-table":{"path":"./assets/models/modern_coffee_table_01/scene.gltf","status":"available-slot","type":"furniture"},
-    "modern-armchair":{"path":"./assets/models/modern_arm_chair_01/scene.gltf","status":"available-slot","type":"furniture"},
-    "modern-wooden-cabinet":{"path":"./assets/models/modern_wooden_cabinet/scene.gltf","status":"available-slot","type":"furniture"},
-    "dining-chair":{"path":"./assets/models/dining_chair_02/scene.gltf","status":"available-slot","type":"furniture"},
-    "potted-plant":{"path":"./assets/models/potted_plant_01/scene.gltf","status":"available-slot","type":"decor"},
-    "crystalline-iceplant":{"path":"./assets/models/crystalline_iceplant/scene.gltf","status":"available-slot","type":"landscape"},
+    "warm-ivory-sectional":{"path":"./assets/models/anamarija/warm-ivory-sectional.glb","status":"planned","type":"furniture","room":"living","target":"contemporary warm-ivory low sectional"},
+    "round-oak-stone-table":{"path":"./assets/models/coffee_table_round_01/scene.gltf","status":"available-slot","type":"furniture","room":"living","source":{"provider":"Poly Haven","assetId":"coffee_table_round_01","license":"CC0"},"productionGate":"binary-and-dependencies-must-exist-in-repo"},
+    "modern-coffee-table":{"path":"./assets/models/modern_coffee_table_01/scene.gltf","status":"available-slot","type":"furniture","source":{"provider":"Poly Haven","assetId":"modern_coffee_table_01","license":"CC0"},"productionGate":"binary-and-dependencies-must-exist-in-repo"},
+    "modern-armchair":{"path":"./assets/models/modern_arm_chair_01/scene.gltf","status":"available-slot","type":"furniture","room":"living","source":{"provider":"Poly Haven","assetId":"modern_arm_chair_01","license":"CC0","author":"Vibrant Nordic","trianglesApprox":9000,"heightM":1.0},"productionGate":"binary-and-dependencies-must-exist-in-repo"},
+    "modern-wooden-cabinet":{"path":"./assets/models/modern_wooden_cabinet/scene.gltf","status":"available-slot","type":"furniture","source":{"provider":"Poly Haven","assetId":"modern_wooden_cabinet","license":"CC0"},"productionGate":"binary-and-dependencies-must-exist-in-repo"},
+    "dining-chair":{"path":"./assets/models/dining_chair_02/scene.gltf","status":"available-slot","type":"furniture","room":"dining","source":{"provider":"Poly Haven","assetId":"dining_chair_02","license":"CC0"},"productionGate":"binary-and-dependencies-must-exist-in-repo"},
+    "potted-plant":{"path":"./assets/models/potted_plant_01/scene.gltf","status":"available-slot","type":"decor","source":{"provider":"Poly Haven","assetId":"potted_plant_01","license":"CC0"},"productionGate":"binary-and-dependencies-must-exist-in-repo"},
+    "crystalline-iceplant":{"path":"./assets/models/crystalline_iceplant/scene.gltf","status":"available-slot","type":"landscape","source":{"provider":"Poly Haven","assetId":"crystalline_iceplant","license":"CC0"},"productionGate":"binary-and-dependencies-must-exist-in-repo"},
     "calacatta-island-3.25m":{"path":"./assets/models/anamarija/calacatta-island-3.25m.glb","status":"planned","type":"fixed-furniture","room":"kitchen"},
     "oak-dining-8":{"path":"./assets/models/anamarija/oak-dining-8.glb","status":"planned","type":"furniture","room":"dining"},
     "pool-8x4":{"path":"./assets/models/anamarija/pool-8x4.glb","status":"planned","type":"amenity","room":"pool"}
