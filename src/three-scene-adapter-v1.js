@@ -9,6 +9,7 @@ export function createThreeSceneAdapter({
   controls = null,
   assetFactory,
   materialResolver = null,
+  collisionHooks = null,
   onBeforeApply = () => {},
   onAfterApply = () => {},
 } = {}) {
@@ -24,6 +25,15 @@ export function createThreeSceneAdapter({
   const records = new Map();
   let transactionDepth = 0;
   let cameraSnapshot = null;
+
+  const cloneState = value => typeof structuredClone === 'function'
+    ? structuredClone(value)
+    : JSON.parse(JSON.stringify(value));
+
+  const finiteOr = (value, fallback) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : fallback;
+  };
 
   function snapshotCamera() {
     const state = {
@@ -52,9 +62,13 @@ export function createThreeSceneAdapter({
   function disposeMaterial(material) {
     if (!material) return;
     const list = Array.isArray(material) ? material : [material];
+    const seenTextures = new Set();
     for (const mat of list) {
       for (const value of Object.values(mat || {})) {
-        if (value?.isTexture && typeof value.dispose === 'function') value.dispose();
+        if (value?.isTexture && typeof value.dispose === 'function' && !seenTextures.has(value)) {
+          seenTextures.add(value);
+          value.dispose();
+        }
       }
       if (typeof mat?.dispose === 'function') mat.dispose();
     }
@@ -71,10 +85,15 @@ export function createThreeSceneAdapter({
     const p = object.position || [0, 0, 0];
     const r = object.rotation || [0, 0, 0];
     const s = object.scale || [1, 1, 1];
-    root.position.set(Number(p[0]) || 0, Number(p[1]) || 0, Number(p[2]) || 0);
-    root.rotation.set(Number(r[0]) || 0, Number(r[1]) || 0, Number(r[2]) || 0, 'XYZ');
-    root.scale.set(Number(s[0]) || 1, Number(s[1]) || 1, Number(s[2]) || 1);
+    root.position.set(finiteOr(p[0], 0), finiteOr(p[1], 0), finiteOr(p[2], 0));
+    root.rotation.set(finiteOr(r[0], 0), finiteOr(r[1], 0), finiteOr(r[2], 0), 'XYZ');
+    root.scale.set(finiteOr(s[0], 1), finiteOr(s[1], 1), finiteOr(s[2], 1));
     root.userData.sceneObject = object;
+    root.updateMatrixWorld(true);
+  }
+
+  function syncCollision(id, root, object) {
+    if (typeof collisionHooks?.upsert === 'function') collisionHooks.upsert(id, root, object);
   }
 
   async function buildObject(id, object) {
@@ -88,8 +107,9 @@ export function createThreeSceneAdapter({
       const replacement = await materialResolver(object.material, object, built);
       if (replacement) {
         built.traverse(node => {
-          if (node.isMesh) node.material = replacement;
+          if (node.isMesh) node.material = replacement.clone ? replacement.clone() : replacement;
         });
+        if (replacement.dispose) replacement.dispose();
       }
     }
     return built;
@@ -124,24 +144,28 @@ export function createThreeSceneAdapter({
       // If geometry/material identity has not changed, mutate transform in place for instant edits.
       if (existing && sameRenderableState(existing.state, object)) {
         applyTransform(existing.root, object);
-        existing.state = structuredClone(object);
+        existing.state = cloneState(object);
+        syncCollision(id, existing.root, object);
         return existing.root;
       }
 
       // Otherwise build replacement first, then swap atomically to avoid visible disappearance.
       const replacement = await buildObject(id, object);
       managedRoot.add(replacement);
+      replacement.updateMatrixWorld(true);
+      syncCollision(id, replacement, object);
       if (existing) {
         managedRoot.remove(existing.root);
         disposeObject(existing.root);
       }
-      records.set(id, { root: replacement, state: structuredClone(object) });
+      records.set(id, { root: replacement, state: cloneState(object) });
       return replacement;
     },
 
     removeObject(id) {
       const existing = records.get(id);
       if (!existing) return;
+      if (typeof collisionHooks?.remove === 'function') collisionHooks.remove(id);
       managedRoot.remove(existing.root);
       disposeObject(existing.root);
       records.delete(id);
