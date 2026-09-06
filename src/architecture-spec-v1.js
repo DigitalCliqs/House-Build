@@ -1,47 +1,22 @@
 // Canonical architectural specification for the current Anamarija EuroMax design model.
 // All dimensions are metres. This is a design/digital-twin source of truth, not a certified construction drawing.
-// The shell, collision system, minimap and future QA tools should derive from this module.
-
 import { HOUSE, POOL, ROOMS, SITE } from './house-config.js';
-
-export const ARCHITECTURE_SPEC = {
-  metadata: {
-    projectId: 'anamarija-euromax', version: '1.1.0', status: 'working-design', units: 'm',
-    sourceBasis: 'Domprojekt Anamarija 153.32 m² original programme, expanded to the user working ~200 m² accessible design.',
-    note: 'Original room relationships retained as design intent; expanded coordinates remain provisional pending dimensioned architect/Domprojekt drawings.'
-  },
-  site:{...SITE}, house:{...HOUSE}, pool:{...POOL}, rooms:ROOMS.map(r=>({...r})),
-  accessibility:{ corridorTarget:1.50, internalDoorClearTarget:0.90, accessibleDoorClearTarget:1.00, entranceDoorClearTarget:1.10, turningDiameterTarget:1.50, kitchenRouteTarget:1.20, walkingEyeHeight:1.65, wheelchairEyeHeight:1.20 },
-  materials:{ mainFloor:'calacatta_porcelain', bedroomFloor:'warm_oak', wall:'warm_white_plaster', glazingFrame:'dark_bronze_aluminium', terrace:'large_format_stone' },
-  walls:[
-    {id:'north-west',axis:'x',a:-10.50,b:-0.20,fixed:7.90,height:3.05,thickness:.20,zone:'external'},
-    {id:'north-east',axis:'x',a:1.15,b:10.50,fixed:7.90,height:3.05,thickness:.20,zone:'external'},
-    {id:'west',axis:'z',fixed:-10.50,a:-3.90,b:7.90,height:3.05,thickness:.20,zone:'external'},
-    {id:'east',axis:'z',fixed:10.50,a:-3.90,b:7.90,height:3.05,thickness:.20,zone:'external'},
-    {id:'south-1',axis:'x',a:-10.50,b:-7.90,fixed:-3.90,height:3.05,thickness:.20,zone:'external'},
-    {id:'south-2',axis:'x',a:-5.00,b:-2.70,fixed:-3.90,height:3.05,thickness:.20,zone:'external'},
-    {id:'south-3',axis:'x',a:-.10,b:1.90,fixed:-3.90,height:3.05,thickness:.20,zone:'external'},
-    {id:'south-4',axis:'x',a:8.30,b:10.50,fixed:-3.90,height:3.05,thickness:.20,zone:'external'},
-    {id:'private-a1',axis:'z',fixed:-5.95,a:-2,b:1.25,height:3.0,thickness:.20,zone:'internal'}, {id:'private-a2',axis:'z',fixed:-5.95,a:2.45,b:6.90,height:3.0,thickness:.20,zone:'internal'},
-    {id:'private-b1',axis:'z',fixed:-1.60,a:-2,b:1.20,height:3.0,thickness:.20,zone:'internal'}, {id:'private-b2',axis:'z',fixed:-1.60,a:2.30,b:6.90,height:3.0,thickness:.20,zone:'internal'},
-    {id:'private-c1',axis:'z',fixed:2.45,a:3.10,b:6.90,height:3.05,thickness:.20,zone:'internal'}, {id:'private-c2',axis:'z',fixed:2.45,a:-1.90,b:.90,height:3.05,thickness:.20,zone:'internal'},
-    {id:'mid-1',axis:'x',a:-10.50,b:-6.55,fixed:2.25,height:3.0,thickness:.20,zone:'internal'}, {id:'mid-2',axis:'x',a:-5.15,b:-3.80,fixed:2.25,height:3.0,thickness:.20,zone:'internal'}, {id:'mid-3',axis:'x',a:-2.65,b:-1.60,fixed:2.25,height:3.0,thickness:.20,zone:'internal'}, {id:'mid-4',axis:'x',a:-1.60,b:-.05,fixed:2.25,height:3.05,thickness:.20,zone:'internal'}, {id:'mid-5',axis:'x',a:1.25,b:2.45,fixed:2.25,height:3.05,thickness:.20,zone:'internal'},
-    {id:'south-zone-1',axis:'x',a:-10.50,b:-6.00,fixed:-2.45,height:3.0,thickness:.20,zone:'internal'}, {id:'south-zone-2',axis:'x',a:-4.80,b:-2.65,fixed:-2.45,height:3.0,thickness:.20,zone:'internal'}, {id:'south-zone-3',axis:'x',a:-1.60,b:-.40,fixed:-2.45,height:3.0,thickness:.20,zone:'internal'}, {id:'south-zone-4',axis:'x',a:.80,b:2.45,fixed:-2.45,height:3.0,thickness:.20,zone:'internal'}
-  ],
-  glazing:[
-    {id:'bedroom',axis:'x',a:-7.90,b:-5.00,fixed:-3.915,height:2.45,collision:true}, {id:'ensuite',axis:'x',a:-2.70,b:-.10,fixed:-3.915,height:2.45,collision:true},
-    {id:'living-left',axis:'x',a:1.90,b:3.90,fixed:-3.915,height:2.80,collision:true}, {id:'living-right',axis:'x',a:6.10,b:8.30,fixed:-3.915,height:2.80,collision:true}
-  ],
-  openings:[
-    {id:'front-entrance',kind:'door',axis:'x',a:-.20,b:1.15,fixed:7.90,clearWidth:1.35,height:2.55,provisional:false},
-    {id:'terrace-portal',kind:'slider',axis:'x',a:3.90,b:6.10,fixed:-3.90,clearWidth:2.20,height:2.80,provisional:true}
-  ],
-  // Ceiling plates deliberately leave the living/dining/kitchen circulation volume open internally while closing private/service rooms overhead.
-  ceilings:[
-    {id:'west-private',x:-6.95,z:2.00,width:7.10,depth:11.40,height:3.00,thickness:.10},
-    {id:'central-private',x:-.20,z:4.95,width:5.90,depth:5.70,height:3.05,thickness:.10},
-    {id:'open-plan',x:6.45,z:1.95,width:7.65,depth:11.35,height:3.20,thickness:.10}
-  ],
-  terrace:{x:4.70,z:-5.95,width:11.60,depth:4.10,level:.035,finish:'large_format_stone'}
+export const ARCHITECTURE_SPEC={
+ metadata:{projectId:'anamarija-euromax',version:'1.2.0',status:'working-design',units:'m',sourceBasis:'Domprojekt Anamarija 153.32 m² original programme and articulated multi-pitched roof/facade language, expanded to the user working ~200 m² accessible design.',note:'Original room relationships and exterior language retained as design intent; expanded coordinates and roof geometry remain provisional pending dimensioned architect/Domprojekt drawings.'},
+ site:{...SITE},house:{...HOUSE},pool:{...POOL},rooms:ROOMS.map(r=>({...r})),
+ accessibility:{corridorTarget:1.50,internalDoorClearTarget:.90,accessibleDoorClearTarget:1.00,entranceDoorClearTarget:1.10,turningDiameterTarget:1.50,kitchenRouteTarget:1.20,walkingEyeHeight:1.65,wheelchairEyeHeight:1.20},
+ materials:{mainFloor:'calacatta_porcelain',bedroomFloor:'warm_oak',wall:'warm_white_plaster',glazingFrame:'dark_bronze_aluminium',terrace:'large_format_stone',roof:'anthracite_roof_tile',accent:'warm_grey_stone'},
+ walls:[
+ {id:'north-west',axis:'x',a:-10.50,b:-.20,fixed:7.90,height:3.05,thickness:.20,zone:'external'},{id:'north-east',axis:'x',a:1.15,b:10.50,fixed:7.90,height:3.05,thickness:.20,zone:'external'},{id:'west',axis:'z',fixed:-10.50,a:-3.90,b:7.90,height:3.05,thickness:.20,zone:'external'},{id:'east',axis:'z',fixed:10.50,a:-3.90,b:7.90,height:3.05,thickness:.20,zone:'external'},
+ {id:'south-1',axis:'x',a:-10.50,b:-7.90,fixed:-3.90,height:3.05,thickness:.20,zone:'external'},{id:'south-2',axis:'x',a:-5,b:-2.70,fixed:-3.90,height:3.05,thickness:.20,zone:'external'},{id:'south-3',axis:'x',a:-.10,b:1.90,fixed:-3.90,height:3.05,thickness:.20,zone:'external'},{id:'south-4',axis:'x',a:8.30,b:10.50,fixed:-3.90,height:3.05,thickness:.20,zone:'external'},
+ {id:'private-a1',axis:'z',fixed:-5.95,a:-2,b:1.25,height:3,thickness:.20,zone:'internal'},{id:'private-a2',axis:'z',fixed:-5.95,a:2.45,b:6.90,height:3,thickness:.20,zone:'internal'},{id:'private-b1',axis:'z',fixed:-1.60,a:-2,b:1.20,height:3,thickness:.20,zone:'internal'},{id:'private-b2',axis:'z',fixed:-1.60,a:2.30,b:6.90,height:3,thickness:.20,zone:'internal'},{id:'private-c1',axis:'z',fixed:2.45,a:3.10,b:6.90,height:3.05,thickness:.20,zone:'internal'},{id:'private-c2',axis:'z',fixed:2.45,a:-1.90,b:.90,height:3.05,thickness:.20,zone:'internal'},
+ {id:'mid-1',axis:'x',a:-10.50,b:-6.55,fixed:2.25,height:3,thickness:.20,zone:'internal'},{id:'mid-2',axis:'x',a:-5.15,b:-3.80,fixed:2.25,height:3,thickness:.20,zone:'internal'},{id:'mid-3',axis:'x',a:-2.65,b:-1.60,fixed:2.25,height:3,thickness:.20,zone:'internal'},{id:'mid-4',axis:'x',a:-1.60,b:-.05,fixed:2.25,height:3.05,thickness:.20,zone:'internal'},{id:'mid-5',axis:'x',a:1.25,b:2.45,fixed:2.25,height:3.05,thickness:.20,zone:'internal'},
+ {id:'south-zone-1',axis:'x',a:-10.50,b:-6,fixed:-2.45,height:3,thickness:.20,zone:'internal'},{id:'south-zone-2',axis:'x',a:-4.80,b:-2.65,fixed:-2.45,height:3,thickness:.20,zone:'internal'},{id:'south-zone-3',axis:'x',a:-1.60,b:-.40,fixed:-2.45,height:3,thickness:.20,zone:'internal'},{id:'south-zone-4',axis:'x',a:.80,b:2.45,fixed:-2.45,height:3,thickness:.20,zone:'internal'}],
+ glazing:[{id:'bedroom',axis:'x',a:-7.90,b:-5,fixed:-3.915,height:2.45,collision:true},{id:'ensuite',axis:'x',a:-2.70,b:-.10,fixed:-3.915,height:2.45,collision:true},{id:'living-left',axis:'x',a:1.90,b:3.90,fixed:-3.915,height:2.80,collision:true},{id:'living-right',axis:'x',a:6.10,b:8.30,fixed:-3.915,height:2.80,collision:true}],
+ openings:[{id:'front-entrance',kind:'door',axis:'x',a:-.20,b:1.15,fixed:7.90,clearWidth:1.35,height:2.55,provisional:false},{id:'terrace-portal',kind:'slider',axis:'x',a:3.90,b:6.10,fixed:-3.90,clearWidth:2.20,height:2.80,provisional:true}],
+ ceilings:[{id:'west-private',x:-6.95,z:2,width:7.10,depth:11.40,height:3,thickness:.10},{id:'central-private',x:-.20,z:4.95,width:5.90,depth:5.70,height:3.05,thickness:.10},{id:'open-plan',x:6.45,z:1.95,width:7.65,depth:11.35,height:3.20,thickness:.10}],
+ roof:{style:'articulated-hip-and-valley',status:'provisional-design',eaveHeight:3.28,overhang:.62,pitchDegrees:24,finish:'anthracite_roof_tile',fascia:'dark_bronze_aluminium',gutters:true,volumes:[{id:'west-wing',x:-6.55,z:2,width:8.65,depth:13.05,ridgeAxis:'z',ridgeHeight:5.05},{id:'central-entry',x:-.35,z:4.55,width:5.10,depth:7.10,ridgeAxis:'x',ridgeHeight:4.72},{id:'open-plan-wing',x:6.15,z:1.65,width:9.55,depth:13.75,ridgeAxis:'z',ridgeHeight:5.22},{id:'dining-projection',x:7.15,z:-3.20,width:6.65,depth:3.60,ridgeAxis:'x',ridgeHeight:4.55}]},
+ facade:{accents:[{id:'entry-stone',axis:'x',x:.48,z:7.79,width:2.75,height:3.02},{id:'terrace-stone',axis:'x',x:8.95,z:-3.79,width:2.45,height:3.02}]},
+ terrace:{x:4.70,z:-5.95,width:11.60,depth:4.10,level:.035,finish:'large_format_stone'}
 };
 export function getArchitectureWall(id){return ARCHITECTURE_SPEC.walls.find(w=>w.id===id)||null;}
