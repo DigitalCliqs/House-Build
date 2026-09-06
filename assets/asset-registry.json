@@ -1,139 +1,29 @@
 {
-  "metadata": {
-    "projectId": "anamarija-euromax",
-    "version": "1.0.0",
-    "generatedBy": "manual-seed",
-    "notes": "Canonical runtime registry shared by the frontend loader and the LLM scene editor. Paths may point to planned Anamarija assets that are not yet populated."
+  "metadata":{"projectId":"anamarija-euromax","version":"1.1.0","generatedBy":"manual-seed","notes":"Canonical runtime registry shared by frontend and LLM scene editor. Planned paths are not production assets until populated."},
+  "models":{
+    "warm-ivory-sectional":{"path":"./assets/models/anamarija/warm-ivory-sectional.glb","status":"planned","type":"furniture","room":"living"},
+    "round-oak-stone-table":{"path":"./assets/models/coffee_table_round_01/scene.gltf","status":"available-slot","type":"furniture","room":"living"},
+    "modern-coffee-table":{"path":"./assets/models/modern_coffee_table_01/scene.gltf","status":"available-slot","type":"furniture"},
+    "modern-armchair":{"path":"./assets/models/modern_arm_chair_01/scene.gltf","status":"available-slot","type":"furniture"},
+    "modern-wooden-cabinet":{"path":"./assets/models/modern_wooden_cabinet/scene.gltf","status":"available-slot","type":"furniture"},
+    "dining-chair":{"path":"./assets/models/dining_chair_02/scene.gltf","status":"available-slot","type":"furniture"},
+    "potted-plant":{"path":"./assets/models/potted_plant_01/scene.gltf","status":"available-slot","type":"decor"},
+    "crystalline-iceplant":{"path":"./assets/models/crystalline_iceplant/scene.gltf","status":"available-slot","type":"landscape"},
+    "calacatta-island-3.25m":{"path":"./assets/models/anamarija/calacatta-island-3.25m.glb","status":"planned","type":"fixed-furniture","room":"kitchen"},
+    "oak-dining-8":{"path":"./assets/models/anamarija/oak-dining-8.glb","status":"planned","type":"furniture","room":"dining"},
+    "pool-8x4":{"path":"./assets/models/anamarija/pool-8x4.glb","status":"planned","type":"amenity","room":"pool"}
   },
-  "models": {
-    "warm-ivory-sectional": {
-      "path": "./assets/models/anamarija/warm-ivory-sectional.glb",
-      "status": "planned",
-      "type": "furniture",
-      "room": "living"
-    },
-    "round-oak-stone-table": {
-      "path": "./assets/models/coffee_table_round_01/scene.gltf",
-      "status": "available-slot",
-      "type": "furniture",
-      "room": "living"
-    },
-    "modern-coffee-table": {
-      "path": "./assets/models/modern_coffee_table_01/scene.gltf",
-      "status": "available-slot",
-      "type": "furniture"
-    },
-    "modern-armchair": {
-      "path": "./assets/models/modern_arm_chair_01/scene.gltf",
-      "status": "available-slot",
-      "type": "furniture"
-    },
-    "modern-wooden-cabinet": {
-      "path": "./assets/models/modern_wooden_cabinet/scene.gltf",
-      "status": "available-slot",
-      "type": "furniture"
-    },
-    "dining-chair": {
-      "path": "./assets/models/dining_chair_02/scene.gltf",
-      "status": "available-slot",
-      "type": "furniture"
-    },
-    "potted-plant": {
-      "path": "./assets/models/potted_plant_01/scene.gltf",
-      "status": "available-slot",
-      "type": "decor"
-    },
-    "crystalline-iceplant": {
-      "path": "./assets/models/crystalline_iceplant/scene.gltf",
-      "status": "available-slot",
-      "type": "landscape"
-    },
-    "calacatta-island-3.25m": {
-      "path": "./assets/models/anamarija/calacatta-island-3.25m.glb",
-      "status": "planned",
-      "type": "fixed-furniture",
-      "room": "kitchen"
-    },
-    "oak-dining-8": {
-      "path": "./assets/models/anamarija/oak-dining-8.glb",
-      "status": "planned",
-      "type": "furniture",
-      "room": "dining"
-    },
-    "pool-8x4": {
-      "path": "./assets/models/anamarija/pool-8x4.glb",
-      "status": "planned",
-      "type": "amenity",
-      "room": "pool"
-    }
+  "materials":{
+    "warm_ivory_fabric":{"status":"planned","maps":{"map":"./assets/textures/anamarija/warm-ivory-fabric/albedo.jpg","normalMap":"./assets/textures/anamarija/warm-ivory-fabric/normal.jpg","roughnessMap":"./assets/textures/anamarija/warm-ivory-fabric/roughness.jpg","aoMap":"./assets/textures/anamarija/warm-ivory-fabric/ao.jpg"}},
+    "calacatta_porcelain":{"status":"planned","maps":{"map":"./assets/textures/anamarija/calacatta-porcelain/albedo.jpg","normalMap":"./assets/textures/anamarija/calacatta-porcelain/normal.jpg","roughnessMap":"./assets/textures/anamarija/calacatta-porcelain/roughness.jpg","aoMap":"./assets/textures/anamarija/calacatta-porcelain/ao.jpg"}},
+    "warm_oak":{"status":"planned","maps":{"map":"./assets/textures/anamarija/warm-oak/albedo.jpg","normalMap":"./assets/textures/anamarija/warm-oak/normal.jpg","roughnessMap":"./assets/textures/anamarija/warm-oak/roughness.jpg","aoMap":"./assets/textures/anamarija/warm-oak/ao.jpg"}},
+    "oak_stone":{"status":"planned","maps":{"map":"./assets/textures/anamarija/oak-stone/albedo.jpg","normalMap":"./assets/textures/anamarija/oak-stone/normal.jpg","roughnessMap":"./assets/textures/anamarija/oak-stone/roughness.jpg","aoMap":"./assets/textures/anamarija/oak-stone/ao.jpg"}},
+    "dark_oak":{"status":"planned","maps":{"map":"./assets/textures/anamarija/dark-oak/albedo.jpg","normalMap":"./assets/textures/anamarija/dark-oak/normal.jpg","roughnessMap":"./assets/textures/anamarija/dark-oak/roughness.jpg","aoMap":"./assets/textures/anamarija/dark-oak/ao.jpg"}},
+    "champagne_bronze":{"status":"procedural-pbr"},
+    "pool_finish":{"status":"planned","maps":{"map":"./assets/textures/anamarija/pool-finish/albedo.jpg","normalMap":"./assets/textures/anamarija/pool-finish/normal.jpg","roughnessMap":"./assets/textures/anamarija/pool-finish/roughness.jpg","aoMap":"./assets/textures/anamarija/pool-finish/ao.jpg"}}
   },
-  "materials": {
-    "warm_ivory_fabric": {
-      "status": "planned",
-      "maps": {
-        "map": "./assets/textures/anamarija/warm-ivory-fabric/albedo.jpg",
-        "normalMap": "./assets/textures/anamarija/warm-ivory-fabric/normal.jpg",
-        "roughnessMap": "./assets/textures/anamarija/warm-ivory-fabric/roughness.jpg",
-        "aoMap": "./assets/textures/anamarija/warm-ivory-fabric/ao.jpg"
-      }
-    },
-    "calacatta_porcelain": {
-      "status": "planned",
-      "maps": {
-        "map": "./assets/textures/anamarija/calacatta-porcelain/albedo.jpg",
-        "normalMap": "./assets/textures/anamarija/calacatta-porcelain/normal.jpg",
-        "roughnessMap": "./assets/textures/anamarija/calacatta-porcelain/roughness.jpg",
-        "aoMap": "./assets/textures/anamarija/calacatta-porcelain/ao.jpg"
-      }
-    },
-    "warm_oak": {
-      "status": "planned",
-      "maps": {
-        "map": "./assets/textures/anamarija/warm-oak/albedo.jpg",
-        "normalMap": "./assets/textures/anamarija/warm-oak/normal.jpg",
-        "roughnessMap": "./assets/textures/anamarija/warm-oak/roughness.jpg",
-        "aoMap": "./assets/textures/anamarija/warm-oak/ao.jpg"
-      }
-    },
-    "oak_stone": {
-      "status": "planned",
-      "maps": {
-        "map": "./assets/textures/anamarija/oak-stone/albedo.jpg",
-        "normalMap": "./assets/textures/anamarija/oak-stone/normal.jpg",
-        "roughnessMap": "./assets/textures/anamarija/oak-stone/roughness.jpg",
-        "aoMap": "./assets/textures/anamarija/oak-stone/ao.jpg"
-      }
-    },
-    "dark_oak": {
-      "status": "planned",
-      "maps": {
-        "map": "./assets/textures/anamarija/dark-oak/albedo.jpg",
-        "normalMap": "./assets/textures/anamarija/dark-oak/normal.jpg",
-        "roughnessMap": "./assets/textures/anamarija/dark-oak/roughness.jpg",
-        "aoMap": "./assets/textures/anamarija/dark-oak/ao.jpg"
-      }
-    },
-    "champagne_bronze": {
-      "status": "procedural-pbr"
-    },
-    "pool_finish": {
-      "status": "planned",
-      "maps": {
-        "map": "./assets/textures/anamarija/pool-finish/albedo.jpg",
-        "normalMap": "./assets/textures/anamarija/pool-finish/normal.jpg",
-        "roughnessMap": "./assets/textures/anamarija/pool-finish/roughness.jpg",
-        "aoMap": "./assets/textures/anamarija/pool-finish/ao.jpg"
-      }
-    }
-  },
-  "environments": {
-    "day": {
-      "path": "./assets/environments/anamarija-day.hdr",
-      "status": "planned"
-    },
-    "evening": {
-      "path": "./assets/environments/anamarija-evening.hdr",
-      "status": "planned"
-    }
+  "environments":{
+    "day":{"path":"./assets/environments/anamarija-day.hdr","status":"planned","intensity":1.0,"rotationY":0,"target":"crisp natural architectural daylight","preferredSource":"Poly Haven","license":"CC0"},
+    "evening":{"path":"./assets/environments/anamarija-evening.hdr","status":"planned","intensity":0.72,"rotationY":0,"target":"warm premium dusk exterior/interior balance","preferredSource":"Poly Haven","license":"CC0"}
   }
 }
