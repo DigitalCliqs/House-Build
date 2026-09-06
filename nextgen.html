@@ -14,6 +14,14 @@
     #note{position:fixed;right:16px;top:16px;z-index:10;max-width:310px;background:rgba(15,18,20,.72);color:#e9ecef;padding:12px 14px;border-radius:14px;font-size:12px;line-height:1.4;border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(12px)}
     @media(max-width:700px){#note{top:auto;right:12px;bottom:60px;left:12px;max-width:none}#hud{left:12px;top:12px}}
   </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.184.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
   <div id="app"></div>
@@ -24,6 +32,6 @@
   </div>
   <div id="note">Next-generation staging build. Architectural shell, collision and camera pipeline are active. Production GLBs, PBR textures and HDRI assets are still being populated, so this is not the final photoreal presentation.</div>
   <div id="status">Initializing…</div>
-  <script type="module" src="./src/nextgen-app-v1.js?v=1"></script>
+  <script type="module" src="./src/nextgen-app-v1.js?v=2"></script>
 </body>
 </html>
