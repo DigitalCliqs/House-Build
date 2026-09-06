@@ -1,87 +1,118 @@
 # Anamarija EuroMax Digital Twin
 
-Interactive browser-based first-person walkthrough of the planned accessible premium ~200 m² EuroMax house near Velika Gorica, Croatia.
+Interactive browser-based first-person walkthrough of the planned premium, accessible **~200 m² enlarged Domprojekt Anamarija** near Velika Gorica, Croatia.
 
-## Current finished-concept scene — v6 + high-detail asset pipeline
+## Governing design target
 
-The active walkthrough combines the high-fidelity v4 scene, the articulated Anamarija-style roof/elevation layer, v6 reflection/façade refinements and an optional real-model asset pipeline.
+The project is not a generic luxury villa and not a literal copy of the stock catalogue house. It is a premium accessible enlargement of the Domprojekt Anamarija, retaining the original single-storey identity and zoning while increasing scale, ceiling height, glazing, circulation, finishes and indoor/outdoor living quality.
 
-Current scene includes high ceilings, panoramic glazing, animated blinds and tall doors, Calacatta-style marble, oak herringbone, detailed kitchen/bathrooms, architectural lighting, accessible circulation, landscaped ~1,200 m² plot, terrace/pergola, 8 × 4 m pool with animated cover, articulated multi-pitch roof, fascia/gutters/downpipes, deeper window reveals, stone feature cladding and guided presentation controls.
+The current governing visual brief is documented in [`DESIGN_TARGET_V40.md`](./DESIGN_TARGET_V40.md).
 
-## Install the real CC0 furniture / planting assets
+The v40 hero route is:
 
-The project can now fetch its selected Poly Haven models automatically rather than requiring manual binary uploads.
+**Entrance → Hallway → Living Room → Kitchen / Dining → Panoramic Glazing → Terrace → Pool**
+
+## Current next-generation scene
+
+The active next-generation walkthrough is `nextgen.html`, driven by `src/nextgen-app-v1.js` and the modular scene stack.
+
+Current systems include:
+
+- Three.js first-person navigation with PointerLockControls;
+- walking and wheelchair eye-height modes;
+- collision-aware movement;
+- room jump navigation;
+- daytime / evening / night presentation states;
+- fullscreen presentation;
+- high ceilings and raised living-zone volume;
+- panoramic glazing and tall doors;
+- Calacatta-style stone / porcelain and warm oak material language;
+- premium architectural lighting;
+- open-plan living, kitchen and dining hero-zone detailing;
+- private-room detailing;
+- terrace, garden and 8 × 4 m pool;
+- runtime GLB/glTF production-asset registry with procedural fallbacks;
+- architectural QA against the current working envelope;
+- optional live-scene WebSocket connection.
+
+## V40 source-of-truth configuration
+
+Core project intent and presentation viewpoints are kept in `src/house-config.js`.
+
+- Base model: Domprojekt Anamarija
+- Concept: Anamarija EuroMax
+- Target internal area: approximately 200 m²
+- General ceiling target: approximately 2.8–3.0 m
+- Main living-zone peak / raised volume: up to approximately 4.0 m in the working concept
+- Tall doors: approximately 2.2–2.3 m
+- Accessibility target: generous step-free circulation with approximately 1.5 m principal turning/circulation zones where practical
+- Pool: 8 × 4 m
+
+Exact construction dimensions remain provisional until replaced by final architect / Domprojekt documentation.
+
+## Production asset pipeline
+
+Selected Poly Haven assets can be fetched automatically:
 
 ```bash
 node scripts/fetch-polyhaven-assets.mjs
 ```
 
-The installer currently targets:
+Downloaded files are placed under `assets/models/<polyhaven-id>/` and registered through the runtime asset registry. Missing production assets retain safe procedural fallbacks so the walkthrough remains usable.
 
-- modern wooden cabinet
-- modern arm chair 01
-- round stone coffee table
-- modern coffee table 01
-- dining chair 02
-- potted plant 01
-- crystalline iceplant
-
-Downloaded files are placed under `assets/models/<polyhaven-id>/` and the walkthrough loads them automatically through `src/asset-manifest-v5.js`. If a file is absent, the procedural fallback scene remains functional.
-
-Poly Haven assets used by this project are CC0. The viewer keeps a visible Poly Haven credit.
+Poly Haven assets used by this project are CC0.
 
 ## Run locally
 
-Because the project uses JavaScript modules, serve the repository through a local web server rather than double-clicking `index.html`.
+Because the project uses JavaScript modules, serve the repository through a local web server:
 
 ```bash
 python -m http.server 8080
 ```
 
-Then open `http://localhost:8080`. VS Code Live Server also works.
+Open:
+
+```text
+http://localhost:8080/nextgen.html
+```
+
+VS Code Live Server also works.
 
 ## Controls
 
 - `WASD` or arrow keys — move
 - mouse — look around after entering first-person mode
-- `Shift` — move faster
-- `Esc` — release mouse lock
-- Profile — walking or wheelchair navigation envelope
-- Turn circle — display a 1.50 m accessibility checking circle
-- Go to / Quick views — jump to principal rooms, terrace, pool or garden
-- Time — inspect the property through the day/night cycle
-- Lighting — force bright-day, evening-mood or night settings
-- Doors — animate all doors open/closed
-- Blinds — animate principal motorised blinds open/closed
-- Pool cover — animate the electric slatted pool cover open/closed
-- Double-click a nearby door — toggle that door individually
-- Guided tour — automated presentation through the principal spaces and garden
+- `Esc` — release pointer lock
+- Wheelchair Mode / Walking Mode — change navigation eye height and movement envelope
+- room list / hero strip — jump to principal viewpoints
+- Time — switch Daytime / Evening / Night presentation states
+- Fullscreen — enter or leave presentation mode
+- touch devices — on-screen movement controls plus drag-to-look
 
 ## Important design status
 
-This is a **visual digital twin / design-development model**, not a certified architectural, structural, fire-safety or accessibility construction drawing. Final wall positions, structural spans, glazing sizes, door clear openings, MEP zones and furniture clearances must still be replaced with the final dimensioned Domprojekt/architect drawings before construction decisions are made.
+This is a **visual digital twin / design-development model**, not a certified architectural, structural, fire-safety, MEP or accessibility construction drawing.
 
-Core dimensions and room zones are kept in `src/house-config.js`. Presentation specifications are in `src/specifications.js`. The presentation layer is `src/presentation-v3.js`; high-fidelity scene geometry is `src/viewer-v4.js`; roof/GLB integration is `src/viewer-bootstrap-v5.js`; and v6 visual refinement is layered above that.
+Final wall positions, structural spans, roof build-up, glazing systems, door clear openings, thresholds, drainage, MEP zones and furniture clearances must be replaced or verified against final professional drawings before construction decisions are made.
 
 ## Technical stack
 
-- Three.js 0.169
-- browser-native ES modules + import map
+- Three.js browser-native ES modules
 - PointerLockControls and GLTFLoader
-- procedural Calacatta-style marble, oak herringbone, stone and landscape materials
-- physical materials, PMREM environment reflection and ACES filmic tone mapping
-- dynamic sun and practical lighting
-- animated doors, blinds, pool cover and water
-- optional local CC0 glTF furniture/vegetation assets
-- no backend required
-
-The MIT-licensed `ch-bas/threejs-sims-house-builder` remains a useful reference/base candidate for later editor functions such as interactive wall editing, plan import, measurements, saved layouts and GLB/glTF export.
+- procedural + production GLB/glTF scene content
+- physically based materials and ACES filmic tone mapping
+- dynamic presentation lighting
+- collision-aware first-person movement
+- modular architecture / interior / lighting / landscape / QA layers
+- no backend required for normal walkthrough use
 
 ## Next refinement milestones
 
 1. Replace concept wall geometry with the exact final dimensioned ~200 m² architectural plan.
 2. Match final Domprojekt elevations and roof geometry exactly from architect drawings.
-3. Replace remaining procedural surfaces with exact selected Croatian product PBR textures.
-4. Expand real-model coverage to sofas, sanitaryware, appliances, beds, wardrobes and more planting.
-5. Add true wheelchair swept-path, transfer-space and door-clearance validation.
-6. Add optional WebXR and exportable cinematic camera paths.
+3. Replace remaining hero-route procedural furniture with high-quality production GLB/glTF assets.
+4. Replace remaining procedural surfaces with exact selected Croatian product PBR textures.
+5. Expand real-model coverage to sanitaryware, appliances, beds, wardrobes and planting.
+6. Add true wheelchair swept-path, transfer-space and door-clearance validation.
+7. Add generated floor-plan/minimap context from the actual geometry.
+8. Add optional guided cinematic camera paths and WebXR.
