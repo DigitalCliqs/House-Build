@@ -14,9 +14,7 @@
     @media(max-width:700px){
       #hud{z-index:2147483000}.panel{position:fixed!important;z-index:2147483646!important;left:8px!important;right:8px!important;top:8px!important;bottom:8px!important;width:auto!important;height:auto!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:14px!important;background:#171a20!important;border-radius:16px!important}.title{font-size:20px}.sub{display:none!important}.row{margin:10px 0}button,select{min-height:48px;font-size:16px}#enter{min-height:58px;font-size:17px;position:sticky;top:0;z-index:2}.grid{grid-template-columns:1fr 1fr}
       #badge,#sceneLabel,#assetStatus{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
-      body.menu-open>div:not(#hud){display:none!important}
-      body.menu-open #hud>*:not(.panel):not(#crosshair){display:none!important}
-      body.menu-open #mobileControls,body.menu-open .mobile-controls,body.menu-open [id*="mobile-controls"],body.menu-open [id*="mobileControls"],body.menu-open [class*="lookZone"],body.menu-open [class*="look-zone"]{display:none!important;pointer-events:none!important;visibility:hidden!important}
+      body.menu-open #mobileControls{visibility:hidden!important;pointer-events:none!important}
     }
   </style>
 </head>
@@ -24,14 +22,24 @@
   <div id="hud"><div id="crosshair"></div><div id="sceneLabel">Finished concept v9 · desktop + mobile · wheelchair swept-path and transfer-zone audit</div><div class="panel">
     <div class="title">Anamarija EuroMax — Finished Walkthrough</div><div class="sub">High-fidelity first-person finished-product visualisation with premium high ceilings, panoramic glazing, Calacatta-style marble, oak herringbone, detailed interiors, accessible circulation, landscaped ~1,200 m² plot, terrace/pergola and 8 × 4 m automated pool.</div><div class="row"><button id="enter">Enter first-person walkthrough</button></div>
     <div class="section"><div class="section-title">Navigation</div><div class="row"><label>Profile</label><select id="profile"><option value="walk">Walking</option><option value="wheelchair">Wheelchair</option></select></div><div class="row"><label>Turn circle</label><select id="turn"><option value="off">Off</option><option value="on">1.50 m overlay</option></select></div><div class="row"><label>Go to</label><select id="teleport"></select></div></div>
-    <div class="section"><div class="section-title">Atmosphere & automation</div><div class="row"><label>Time</label><input id="time" type="range" min="0" max="24" step="0.25" value="18.5"/><span id="timeValue" class="value">18:30</span></div><div class="row"><label>Lighting</label><select id="mood"><option value="auto">Auto</option><option value="day">Bright day</option><option value="evening">Evening mood</option><option value="night">Night</option></select></div><div class="row"><label>Doors</label><select id="doors"><option value="closed">Closed</option><option value="open">Open all</option></select></div><div class="row"><label>Blinds</label><select id="blinds"><option value="open">Open</option><option value="closed">Closed</option></select></div><div class="row"><label>Pool cover</label><select id="poolCover"><option value="open">Open</option><option value="closed">Closed</option></select></div></div>
+    <div class="section"><div class="section-title">Atmosphere & automation</div><div class="row"><label>Time</label><input id="time" type="range" min="0" max="24" step="0.25" value="13.5"/><span id="timeValue" class="value">13:30</span></div><div class="row"><label>Lighting</label><select id="mood"><option value="auto">Auto</option><option value="day">Bright day</option><option value="evening">Evening mood</option><option value="night">Night</option></select></div><div class="row"><label>Doors</label><select id="doors"><option value="closed">Closed</option><option value="open">Open all</option></select></div><div class="row"><label>Blinds</label><select id="blinds"><option value="open">Open</option><option value="closed">Closed</option></select></div><div class="row"><label>Pool cover</label><select id="poolCover"><option value="open">Open</option><option value="closed">Closed</option></select></div></div>
     <div class="section"><div class="section-title">Quick views</div><div class="grid"><button class="secondary quick" data-go="Living">Living</button><button class="secondary quick" data-go="Kitchen">Kitchen</button><button class="secondary quick" data-go="Accessible bathroom">Accessible bath</button><button class="secondary quick" data-go="Terrace">Terrace</button><button class="secondary quick" data-go="Pool">Pool</button><button class="secondary quick" data-go="Garden">Garden</button></div></div>
   </div><div id="badge">Desktop: WASD / arrows · mouse look · Shift faster · Esc release. Mobile: left joystick · right-side drag to look.</div></div>
   <script>
     const mobile=matchMedia('(max-width:700px)').matches;
     const panel=()=>document.querySelector('.panel');
-    if(mobile){requestAnimationFrame(()=>{const p=panel();if(p)p.scrollTop=0});const hideOverlays=()=>{for(const el of document.body.children){if(el.id!=='hud'&&el.tagName==='DIV'&&document.body.classList.contains('menu-open'))el.style.setProperty('display','none','important')}['assetStatus','badge','sceneLabel'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.setProperty('display','none','important')})};new MutationObserver(hideOverlays).observe(document.body,{childList:true,subtree:true});hideOverlays();}
-    document.addEventListener('click',e=>{if(e.target&&e.target.id==='enter'){document.body.classList.remove('menu-open');const p=panel();if(mobile&&p)p.style.display='none';const a=document.getElementById('assetStatus');if(a&&mobile)a.style.display='none';}});
+    const hideStatus=()=>{if(!mobile)return;['assetStatus','badge','sceneLabel'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.setProperty('display','none','important')})};
+    if(mobile){new MutationObserver(hideStatus).observe(document.body,{childList:true,subtree:true});hideStatus();requestAnimationFrame(()=>{const p=panel();if(p)p.scrollTop=0});}
+    document.addEventListener('click',e=>{
+      if(!(e.target&&e.target.id==='enter'))return;
+      if(mobile){
+        document.body.classList.remove('menu-open');
+        const p=panel();if(p){p.style.display='none';p.dataset.mobileHidden='1';}
+        const mood=document.getElementById('mood');if(mood){mood.value='day';mood.dispatchEvent(new Event('change'));}
+        const doors=document.getElementById('doors');if(doors){doors.value='open';doors.dispatchEvent(new Event('change'));}
+        setTimeout(()=>{const t=document.getElementById('teleport');if(t&&[...t.options].some(o=>o.value==='Entrance'||o.text==='Entrance')){t.value='Entrance';t.dispatchEvent(new Event('change'));}},250);
+      }
+    });
   </script>
-  <script type="module" src="./src/app-v9.js?v=10-mobile-fix"></script>
+  <script type="module" src="./src/app-v9.js?v=11-mobile-controls"></script>
 </body></html>
