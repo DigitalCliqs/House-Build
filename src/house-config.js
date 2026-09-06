@@ -1,43 +1,72 @@
-// Concept geometry only. Units are metres.
-export const HOUSE = {
-  width: 20,
-  depth: 10,
-  wallThickness: 0.18,
-  privateCeiling: 2.8,
-  livingCeiling: 3.0,
-  terraceDepth: 4,
-  pool: { width: 8, depth: 4 },
+// Anamarija EuroMax visual digital-twin configuration.
+// Units are metres. This is a design visualisation model, not a construction drawing.
+
+export const SITE = {
+  width: 30,
+  depth: 40,
+  roadSide: 'north',
+  hedgeHeight: 1.9,
 };
 
-// Rectangles used mainly for floor finishes and labels.
-// x/z are centre points in the 20 x 10 m concept footprint.
+export const HOUSE = {
+  width: 21.0,
+  depth: 11.8,
+  x: 0,
+  z: 2.0,
+  wallThickness: 0.20,
+  privateCeiling: 2.80,
+  mainCeiling: 3.05,
+  vaultedPeak: 4.10,
+  doorHeight: 2.30,
+  standardDoor: 1.00,
+  accessibleDoor: 1.10,
+  entranceDoor: 1.30,
+  terraceDepth: 4.2,
+};
+
+export const POOL = {
+  x: 4.8,
+  z: -10.2,
+  width: 8.0,
+  depth: 4.0,
+  deckWidth: 11.5,
+  deckDepth: 7.0,
+};
+
+export const FINISHES = {
+  mainFloor: 'calacatta',
+  bedroomFloor: 'oak-herringbone',
+  walls: 'warm-white',
+  joinery: 'warm-white',
+  metal: 'champagne-bronze',
+};
+
+// Room floor zones. x/z are centre points. The plan remains editable as the
+// final architectural drawing is developed.
 export const ROOMS = [
-  { name: 'Bedroom 1', x:-7.6, z:-2.7, w:4.2, d:4.4, finish:'wood' },
-  { name: 'Bedroom 2', x:-3.5, z:-2.7, w:3.8, d:4.4, finish:'wood' },
-  { name: 'Accessible bedroom', x:-7.1, z:2.4, w:5.2, d:4.2, finish:'wood' },
-  { name: 'Accessible bathroom', x:-2.8, z:2.5, w:3.0, d:4.0, finish:'marble' },
-  { name: 'Office', x:1.0, z:2.5, w:3.8, d:4.0, finish:'wood' },
-  { name: 'Hall / storage', x:0.4, z:-2.7, w:3.6, d:4.4, finish:'marble' },
-  { name: 'Kitchen / dining / living', x:6.2, z:0.0, w:7.6, d:9.2, finish:'marble', high:true },
+  { id:'bed1', name:'Bedroom 1', x:-8.05, z:0.10, w:4.10, d:4.45, finish:'wood', ceiling:2.8 },
+  { id:'bed2', name:'Bedroom 2', x:-3.75, z:0.10, w:4.10, d:4.45, finish:'wood', ceiling:2.8 },
+  { id:'accessible', name:'Accessible bedroom', x:-7.55, z:4.55, w:5.10, d:4.10, finish:'wood', ceiling:2.8 },
+  { id:'bath', name:'Accessible bathroom', x:-3.20, z:4.55, w:3.10, d:4.10, finish:'marble', ceiling:2.8 },
+  { id:'office', name:'Office', x:0.55, z:4.55, w:3.75, d:4.10, finish:'wood', ceiling:2.8 },
+  { id:'storage', name:'Built-in storage / hall', x:0.50, z:0.00, w:3.55, d:4.30, finish:'marble', ceiling:3.0 },
+  { id:'kitchen', name:'Kitchen', x:5.00, z:4.25, w:5.10, d:4.55, finish:'marble', ceiling:3.05 },
+  { id:'dining', name:'Dining', x:7.20, z:0.15, w:4.80, d:3.30, finish:'marble', ceiling:3.4 },
+  { id:'living', name:'Living', x:5.10, z:-2.30, w:8.50, d:4.00, finish:'marble', ceiling:4.1 },
+  { id:'master', name:'Main bedroom', x:-5.40, z:-4.35, w:5.20, d:3.60, finish:'wood', ceiling:2.8 },
+  { id:'ensuite', name:'Ensuite', x:-1.35, z:-4.35, w:2.50, d:3.60, finish:'marble', ceiling:2.8 },
+  { id:'wc', name:'Guest WC', x:1.05, z:-4.30, w:1.55, d:2.00, finish:'marble', ceiling:2.8 },
 ];
 
-// Interior wall segments [x1,z1,x2,z2,height].
-export const WALLS = [
-  [-5.4,-5,-5.4,-0.5,2.8],
-  [-1.6,-5,-1.6,-0.5,2.8],
-  [2.2,-5,2.2,-0.5,3.0],
-  [-4.5,-0.5,-4.5,5,2.8],
-  [-1.3,-0.5,-1.3,5,2.8],
-  [3.0,-0.5,3.0,5,3.0],
-  [-10,-0.5,3.0,-0.5,2.8],
-];
-
-// Concept door openings. They are visual markers in this milestone.
-export const DOORS = [
-  { x:-5.4,z:-2.5,rot:Math.PI/2,w:1.0,h:2.3 },
-  { x:-1.6,z:-2.5,rot:Math.PI/2,w:1.0,h:2.3 },
-  { x:-4.5,z:2.2,rot:Math.PI/2,w:1.1,h:2.3 },
-  { x:-1.3,z:2.3,rot:Math.PI/2,w:1.0,h:2.3 },
-  { x:3.0,z:2.4,rot:Math.PI/2,w:1.0,h:2.3 },
-  { x:0.4,z:-0.5,rot:0,w:1.2,h:2.3 },
-];
+export const TELEPORTS = {
+  Entrance: [0.5, 1.65, 7.15, Math.PI],
+  Living: [4.2, 1.65, -1.6, -Math.PI/2],
+  Kitchen: [4.8, 1.65, 4.1, Math.PI],
+  'Accessible bedroom': [-7.4, 1.65, 4.0, 0],
+  'Accessible bathroom': [-3.15, 1.65, 4.2, 0],
+  'Main bedroom': [-5.5, 1.65, -4.0, 0],
+  Office: [0.4, 1.65, 4.3, 0],
+  Terrace: [4.8, 1.65, -5.8, 0],
+  Pool: [4.8, 1.65, -8.0, Math.PI],
+  Garden: [-7.5, 1.65, -11.0, 0],
+};
