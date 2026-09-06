@@ -6,6 +6,7 @@ import { createPremiumOpenPlanZone } from './premium-zone-v1.js';
 import { createPremiumLighting } from './premium-lighting-v1.js';
 import { applyProductionMaterialPass } from './production-material-pass-v1.js';
 import { createHeroInterior } from './hero-interior-v1.js';
+import { createHeroFinishV40 } from './hero-finish-v40.js';
 import { createPrivateRoomDetail } from './private-room-detail-v1.js';
 import { createProductionAssetLayer } from './production-asset-layer-v1.js';
 import { createPoolGardenDetail } from './pool-garden-detail-v1.js';
@@ -70,6 +71,7 @@ scene.add(sun);
 createAnamarijaArchitectureShell({THREE,scene});
 createPremiumOpenPlanZone({THREE,scene});
 createHeroInterior({THREE,scene});
+createHeroFinishV40({THREE,scene});
 createPrivateRoomDetail({THREE,scene});
 const premiumLighting=createPremiumLighting({THREE,scene,renderer});
 createPoolGardenDetail({THREE,scene});
@@ -88,7 +90,8 @@ async function loadRuntimeRegistry(){
 }
 
 const registry=await loadRuntimeRegistry().catch(e=>{assetEl.textContent='asset registry unavailable';console.error(e);return{raw:{},paths:{}}});
-createProductionAssetLayer({THREE,scene,GLTFLoader,registry:registry.raw,onStatus:e=>{if(e.state==='error')console.warn('Production model failed',e)}});
+const productionAssets=createProductionAssetLayer({THREE,scene,GLTFLoader,registry:registry.raw,onStatus:e=>{if(e.state==='error')console.warn('Production model failed',e)}});
+productionAssets.ready.then(items=>{const loaded=items.filter(Boolean).length;if(loaded)assetEl.textContent=`${loaded} hero placements loaded · production scene`});
 const engine=createAnamarijaNextgenEngine({THREE,GLTFLoader,scene,camera,renderer,controls,assetRegistry:registry.paths,strictAssets:true,strictMaterials:false,onAssetStatus:e=>{if(e.state==='error')console.warn('Asset load failed',e)}});
 
 let viewMode='walking';
