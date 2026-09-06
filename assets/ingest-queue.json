@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "purpose": "Reference-led first production ingestion batch. These assets are verified CC0 Poly Haven sources; suitability is still reviewed in-scene before registry promotion.",
+  "assets": [
+    {"assetId":"modern_arm_chair_01","destination":"modern_arm_chair_01"},
+    {"assetId":"coffee_table_round_01","destination":"coffee_table_round_01"},
+    {"assetId":"modern_coffee_table_01","destination":"modern_coffee_table_01"},
+    {"assetId":"modern_wooden_cabinet","destination":"modern_wooden_cabinet"},
+    {"assetId":"potted_plant_01","destination":"potted_plant_01"},
+    {"assetId":"crystalline_iceplant","destination":"crystalline_iceplant"}
+  ]
+}
