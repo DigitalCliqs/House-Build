@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createAnamarijaArchitectureShell } from './architecture-shell-v1.js';
+import { createPremiumOpenPlanZone } from './premium-zone-v1.js';
 import { createAnamarijaNextgenEngine } from './nextgen-engine-v1.js';
 
 const canvasHost = document.getElementById('app');
@@ -33,8 +34,8 @@ if (isTouch) {
 }
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xbfc9cf);
-scene.fog = new THREE.Fog(0xbfc9cf, 42, 110);
+scene.background = new THREE.Color(0xc7d0d2);
+scene.fog = new THREE.Fog(0xc7d0d2, 46, 120);
 
 const camera = new THREE.PerspectiveCamera(67, innerWidth / innerHeight, 0.04, 180);
 camera.position.set(0.5, 1.65, 7.15);
@@ -47,7 +48,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+renderer.toneMappingExposure = 1.08;
 canvasHost.appendChild(renderer.domElement);
 
 const controls = new PointerLockControls(camera, renderer.domElement);
@@ -68,9 +69,9 @@ enterBtn.addEventListener('click', async () => {
 controls.addEventListener('lock', () => statusEl.textContent = 'WASD to move · mouse to look');
 controls.addEventListener('unlock', () => statusEl.textContent = 'Tap Enter walkthrough to continue');
 
-const hemi = new THREE.HemisphereLight(0xffffff, 0x66706c, 1.25);
+const hemi = new THREE.HemisphereLight(0xffffff, 0x6c746e, 1.05);
 scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xfff4de, 3.2);
+const sun = new THREE.DirectionalLight(0xfff1d9, 3.5);
 sun.position.set(-9, 14, 8);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
@@ -82,6 +83,7 @@ sun.shadow.bias = -0.00025;
 scene.add(sun);
 
 createAnamarijaArchitectureShell({ THREE, scene });
+createPremiumOpenPlanZone({ THREE, scene });
 
 async function loadRuntimeRegistry() {
   const response = await fetch('./assets/asset-registry.json', { cache: 'no-store' });
