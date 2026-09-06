@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "projectId": "anamarija-euromax",
+    "version": "1.0.0",
+    "units": "meters",
+    "updatedAt": "2026-09-06T00:00:00Z"
+  },
+  "objects": {
+    "living.sofa.main": {
+      "type": "furniture",
+      "room": "living",
+      "asset": "warm-ivory-sectional",
+      "position": [5.0, 0.0, -2.45],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "material": "warm_ivory_fabric"
+    },
+    "living.coffee-table": {
+      "type": "furniture",
+      "room": "living",
+      "asset": "round-oak-stone-table",
+      "position": [4.9, 0.0, -1.55],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "material": "oak_stone"
+    },
+    "kitchen.island": {
+      "type": "fixed-furniture",
+      "room": "kitchen",
+      "asset": "calacatta-island-3.25m",
+      "position": [5.0, 0.0, 3.25],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "material": "calacatta_porcelain"
+    },
+    "dining.table": {
+      "type": "furniture",
+      "room": "dining",
+      "asset": "oak-dining-8",
+      "position": [6.65, 0.0, 0.55],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "material": "warm_oak"
+    },
+    "pool.main": {
+      "type": "amenity",
+      "room": "pool",
+      "asset": "pool-8x4",
+      "position": [4.8, 0.0, -10.2],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "material": "pool_finish"
+    }
+  },
+  "revisions": []
+}
