@@ -1,6 +1,6 @@
 export const TOUR_SCENES = [
   {id:'exterior-front',label:'Exterior · Front',image:'./assets/tour-v12/exterior-front.webp',next:['entrance','garden-front']},
-  {id:'entrance',label:'Entrance',image:'./assets/tour-v12/entrance.webp',next:['hallway','exterior-front']},
+  {id:'entrance',label:'Entrance',image:'./assets/tour-v12/entrance.jpg',next:['hallway','living','exterior-front']},
   {id:'hallway',label:'Hallway',image:'./assets/tour-v12/hallway.webp',next:['living','office','accessible-bedroom','master-bedroom','entrance']},
   {id:'living',label:'Living room',image:'./assets/tour-v12/living.webp',next:['dining','terrace','hallway']},
   {id:'dining',label:'Dining area',image:'./assets/tour-v12/dining.webp',next:['kitchen','living','terrace']},
@@ -21,5 +21,5 @@ export const TOUR_META = {
   title:'Anamarija EuroMax',
   subtitle:'~200 m² · premium · accessible · low-energy home',
   floorplan:'./assets/tour-v12/floorplan.webp',
-  first:'exterior-front',
+  first:'entrance',
 };
