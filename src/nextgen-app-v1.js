@@ -17,14 +17,20 @@ const mobileButtons = {
 };
 
 window.addEventListener('error', event => {
+  statusEl.style.display = 'block';
   statusEl.textContent = `Startup error: ${event.message || 'unknown error'}`;
 });
 window.addEventListener('unhandledrejection', event => {
+  statusEl.style.display = 'block';
   statusEl.textContent = `Startup error: ${event.reason?.message || event.reason || 'unknown error'}`;
 });
 
 const isTouch = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
 let mobileActive = false;
+if (isTouch) {
+  enterBtn.textContent = 'Enter';
+  modeBtn.textContent = 'Walk';
+}
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xbfc9cf);
@@ -49,8 +55,8 @@ enterBtn.addEventListener('click', async () => {
   if (isTouch) {
     mobileActive = !mobileActive;
     document.body.classList.toggle('mobile-active', mobileActive);
-    enterBtn.textContent = mobileActive ? 'Exit walkthrough' : 'Enter walkthrough';
-    statusEl.textContent = mobileActive ? 'Use arrows to move · drag scene to look' : 'Tap Enter walkthrough to start';
+    enterBtn.textContent = mobileActive ? 'Exit' : 'Enter';
+    statusEl.textContent = mobileActive ? '' : 'Tap Enter to start';
     return;
   }
   try {
@@ -109,8 +115,12 @@ let viewMode = 'walking';
 modeBtn.addEventListener('click', () => {
   viewMode = viewMode === 'walking' ? 'wheelchair' : 'walking';
   engine.setViewHeight(viewMode);
-  modeBtn.textContent = viewMode === 'walking' ? 'Walking view' : 'Wheelchair view';
-  statusEl.textContent = viewMode === 'walking' ? 'Walking view active' : 'Wheelchair view active';
+  if (isTouch) {
+    modeBtn.textContent = viewMode === 'walking' ? 'Walk' : 'Chair';
+  } else {
+    modeBtn.textContent = viewMode === 'walking' ? 'Walking view' : 'Wheelchair view';
+    statusEl.textContent = viewMode === 'walking' ? 'Walking view active' : 'Wheelchair view active';
+  }
 });
 
 const keys = new Set();
@@ -204,4 +214,4 @@ const wsUrl = new URLSearchParams(location.search).get('ws');
 if (wsUrl?.startsWith('wss://') || wsUrl?.startsWith('ws://localhost')) {
   engine.connect(wsUrl, state => console.log('live scene', state));
 }
-statusEl.textContent = isTouch ? 'Tap Enter walkthrough to enable touch controls' : 'Tap Enter walkthrough to start';
+statusEl.textContent = isTouch ? 'Tap Enter to start' : 'Tap Enter walkthrough to start';
