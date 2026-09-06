@@ -1,0 +1,63 @@
+export const HOUSE_SPECS = {
+  Envelope: [
+    ['Wall system','Domprojekt EuroMax design intent'],
+    ['Wall U-value','~0.092 W/m²K target'],
+    ['Glazing','Large triple low-e panoramic glazing'],
+    ['Installed window target','Uw ~0.8–0.9 W/m²K where feasible'],
+    ['Ventilation','MVHR heat-recovery ventilation'],
+    ['Heating','Air-source heat pump + underfloor heating'],
+    ['Shading','Motorised external blinds / venetians'],
+  ],
+  Architecture: [
+    ['House','~200 m² single-storey accessible villa'],
+    ['Plot','~1,200 m² landscaped concept plot'],
+    ['Private ceilings','2.80 m'],
+    ['Main rooms','~3.05 m'],
+    ['Living feature zone','~4.10 m raised / vaulted concept'],
+    ['Internal doors','~2.30 m high'],
+    ['Accessible doors','~1.10 m clear target'],
+    ['Entrance','~1.30 m architectural entrance concept'],
+  ],
+  Finishes: [
+    ['Main floor','White Calacatta-style porcelain, grey/gold veining'],
+    ['Bedrooms / office','Real oak herringbone'],
+    ['Bathrooms','Full-height marble-look porcelain'],
+    ['Metal accents','Champagne / brushed bronze'],
+    ['Walls / joinery','Warm white'],
+  ],
+  Accessibility: [
+    ['Corridors','1.50 m target where circulation requires'],
+    ['Turning spaces','1.50 m diameter'],
+    ['Kitchen circulation','1.20 m+ with 1.50 m turning space'],
+    ['Accessible bathroom','Level wet room / roll-in shower'],
+    ['External route','Step-free entrance, terrace and garden path'],
+    ['Poolside','Level accessible route; pool-lift provision zone'],
+  ],
+  Pool: [
+    ['Pool','8 × 4 m premium pool concept'],
+    ['Cover','Automatic electric slatted cover'],
+    ['Automation','Self-cleaning / automated filtration concept'],
+    ['Water treatment','Salt electrolysis + automatic pH concept'],
+    ['Heating','Dedicated pool heat-pump provision'],
+  ],
+  Yard: [
+    ['Terrace','Flush accessible terrace + pergola'],
+    ['Driveway','Large paved driveway'],
+    ['Boundary','Dense hedge / landscaped privacy'],
+    ['Planting','Trees, borders and low-maintenance planting'],
+    ['Lighting','Architectural and landscape mood lighting'],
+  ],
+};
+
+export const ROOM_NOTES = {
+  Entrance:'Tall architectural entrance, level threshold, wide circulation and central built-in storage.',
+  Living:'Raised ~4.1 m feature ceiling, panoramic glazing, architectural LED detail and direct terrace/pool view.',
+  Kitchen:'Large island, premium stone worktops, generous wheelchair circulation and accessible prep provision.',
+  'Accessible bedroom':'Extra circulation around bed and storage, oak herringbone floor and direct accessible route.',
+  'Accessible bathroom':'Level wet room, roll-in shower, 1.50 m turning space, wall-hung basin and grab-rail provision.',
+  'Main bedroom':'Oak herringbone, tall doors, warm architectural lighting and ensuite connection.',
+  Office:'Oak herringbone floor, fitted desk/storage and tall door.',
+  Terrace:'Flush indoor-outdoor threshold, pergola, lounge area and architectural strip lighting.',
+  Pool:'8 × 4 m pool, electric slatted cover, accessible deck, outdoor shower and pool-lift provision.',
+  Garden:'Landscaped ~1,200 m² concept plot with privacy hedge, trees, level paths and large driveway.',
+};
