@@ -1,6 +1,14 @@
 // Anamarija EuroMax visual digital-twin configuration.
 // Units are metres. This is a design visualisation model, not a construction drawing.
 
+export const PROJECT = {
+  baseModel: 'Domprojekt Anamarija',
+  conceptName: 'Anamarija EuroMax',
+  targetInternalAreaM2: 200,
+  designTarget: 'premium-accessible-enlargement',
+  governingBrief: 'DESIGN_TARGET_V40.md',
+};
+
 export const SITE = {
   width: 30,
   depth: 40,
@@ -37,8 +45,8 @@ export const FINISHES = {
   mainFloor: 'calacatta',
   bedroomFloor: 'oak-herringbone',
   walls: 'warm-white',
-  joinery: 'warm-white',
-  metal: 'champagne-bronze',
+  joinery: 'warm-oak-and-warm-white',
+  metal: 'dark-bronze-aluminium',
 };
 
 // Room floor zones. x/z are centre points. The plan remains editable as the
@@ -58,15 +66,30 @@ export const ROOMS = [
   { id:'wc', name:'Guest WC', x:1.05, z:-4.30, w:1.55, d:2.00, finish:'marble', ceiling:2.8 },
 ];
 
+// Presentation viewpoints used by the v40 UI. They are scene viewpoints,
+// not architectural dimensions, and may be tuned without changing the plan.
 export const TELEPORTS = {
   Entrance: [0.5, 1.65, 7.15, Math.PI],
-  Living: [4.2, 1.65, -1.6, -Math.PI/2],
-  Kitchen: [4.8, 1.65, 4.1, Math.PI],
-  'Accessible bedroom': [-7.4, 1.65, 4.0, 0],
-  'Accessible bathroom': [-3.15, 1.65, 4.2, 0],
-  'Main bedroom': [-5.5, 1.65, -4.0, 0],
-  Office: [0.4, 1.65, 4.3, 0],
-  Terrace: [4.8, 1.65, -5.8, 0],
-  Pool: [4.8, 1.65, -8.0, Math.PI],
-  Garden: [-7.5, 1.65, -11.0, 0],
+  Hallway: [0.45, 1.65, 3.75, Math.PI],
+  'Living Room': [4.20, 1.65, -1.60, -Math.PI/2],
+  Kitchen: [4.80, 1.65, 4.10, Math.PI],
+  'Dining Area': [6.45, 1.65, 0.55, Math.PI],
+  'Master Bedroom': [-5.50, 1.65, -4.00, 0],
+  Ensuite: [-1.35, 1.65, -4.15, 0],
+  'Child Bedroom': [-7.40, 1.65, 4.00, 0],
+  'Guest Bedroom': [-8.00, 1.65, 0.10, 0],
+  'Main Bathroom': [-3.15, 1.65, 4.20, 0],
+  Office: [0.40, 1.65, 4.30, 0],
+  Utility: [0.50, 1.65, 0.60, Math.PI],
+  'Terrace & Pool': [4.80, 1.65, -5.80, 0],
+  Garden: [-7.50, 1.65, -11.00, 0],
 };
+
+export const HERO_ROUTE = [
+  'Entrance',
+  'Hallway',
+  'Living Room',
+  'Kitchen',
+  'Dining Area',
+  'Terrace & Pool',
+];
