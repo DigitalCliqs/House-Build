@@ -1,6 +1,6 @@
-import * as THREE from 'https://unpkg.com/three@0.184.0/build/three.module.js';
-import { PointerLockControls } from 'https://unpkg.com/three@0.184.0/examples/jsm/controls/PointerLockControls.js';
-import { GLTFLoader } from 'https://unpkg.com/three@0.184.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createAnamarijaArchitectureShell } from './architecture-shell-v1.js';
 import { createAnamarijaNextgenEngine } from './nextgen-engine-v1.js';
 
@@ -9,6 +9,13 @@ const statusEl = document.getElementById('status');
 const enterBtn = document.getElementById('enter');
 const modeBtn = document.getElementById('mode');
 const assetEl = document.getElementById('asset-state');
+
+window.addEventListener('error', event => {
+  statusEl.textContent = `Startup error: ${event.message || 'unknown error'}`;
+});
+window.addEventListener('unhandledrejection', event => {
+  statusEl.textContent = `Startup error: ${event.reason?.message || event.reason || 'unknown error'}`;
+});
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xbfc9cf);
@@ -32,7 +39,6 @@ enterBtn.addEventListener('click', () => controls.lock());
 controls.addEventListener('lock', () => statusEl.textContent = 'WASD to move · mouse to look');
 controls.addEventListener('unlock', () => statusEl.textContent = 'Tap Enter walkthrough to continue');
 
-// Lighting is deliberately physical-ish but temporary until production HDRIs are populated.
 const hemi = new THREE.HemisphereLight(0xffffff, 0x66706c, 1.25);
 scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff4de, 3.2);
@@ -46,7 +52,7 @@ sun.shadow.camera.bottom = -25;
 sun.shadow.bias = -0.00025;
 scene.add(sun);
 
-const shell = createAnamarijaArchitectureShell({ THREE, scene });
+createAnamarijaArchitectureShell({ THREE, scene });
 
 async function loadRuntimeRegistry() {
   const response = await fetch('./assets/asset-registry.json', { cache: 'no-store' });
@@ -56,9 +62,9 @@ async function loadRuntimeRegistry() {
   for (const [id, entry] of Object.entries(registry.models || {})) {
     if (entry?.path) paths[id] = entry.path;
   }
-  const available = Object.values(registry.models || {}).filter(entry => entry?.status === 'available').length;
+  const ready = Object.values(registry.models || {}).filter(entry => ['available','available-slot'].includes(entry?.status)).length;
   const planned = Object.values(registry.models || {}).filter(entry => entry?.status === 'planned').length;
-  assetEl.textContent = `${available} production models · ${planned} planned`;
+  assetEl.textContent = `${ready} registered slots · ${planned} planned`;
   return { raw: registry, paths };
 }
 
@@ -69,18 +75,11 @@ const registry = await loadRuntimeRegistry().catch(error => {
 });
 
 const engine = createAnamarijaNextgenEngine({
-  THREE,
-  GLTFLoader,
-  scene,
-  camera,
-  renderer,
-  controls,
+  THREE, GLTFLoader, scene, camera, renderer, controls,
   assetRegistry: registry.paths,
   strictAssets: true,
   strictMaterials: false,
-  onAssetStatus: event => {
-    if (event.state === 'error') console.warn('Asset load failed', event);
-  },
+  onAssetStatus: event => { if (event.state === 'error') console.warn('Asset load failed', event); },
 });
 
 let viewMode = 'walking';
@@ -94,7 +93,6 @@ const keys = new Set();
 addEventListener('keydown', event => keys.add(event.code));
 addEventListener('keyup', event => keys.delete(event.code));
 addEventListener('blur', () => keys.clear());
-
 const clock = new THREE.Clock();
 const forward = new THREE.Vector3();
 const right = new THREE.Vector3();
@@ -104,23 +102,18 @@ const worldUp = new THREE.Vector3(0, 1, 0);
 function updateMovement(delta) {
   if (!controls.isLocked) return;
   const speed = viewMode === 'wheelchair' ? 1.65 : 2.25;
-  let f = 0;
-  let r = 0;
+  let f = 0, r = 0;
   if (keys.has('KeyW') || keys.has('ArrowUp')) f += 1;
   if (keys.has('KeyS') || keys.has('ArrowDown')) f -= 1;
   if (keys.has('KeyD') || keys.has('ArrowRight')) r += 1;
   if (keys.has('KeyA') || keys.has('ArrowLeft')) r -= 1;
   if (!f && !r) return;
-
   camera.getWorldDirection(forward);
   forward.y = 0;
   if (forward.lengthSq() < 1e-8) forward.set(0, 0, -1);
   forward.normalize();
   right.crossVectors(forward, worldUp).normalize();
-
-  intended.set(0, 0, 0)
-    .addScaledVector(forward, f)
-    .addScaledVector(right, r);
+  intended.set(0, 0, 0).addScaledVector(forward, f).addScaledVector(right, r);
   if (intended.lengthSq() > 1) intended.normalize();
   intended.multiplyScalar(speed * Math.min(delta, 0.05));
   engine.moveFirstPerson(intended, viewMode);
@@ -139,11 +132,8 @@ addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 
-// Do not connect to a localhost WebSocket from GitHub Pages. A production WSS URL
-// can be supplied later via ?ws=wss://host/ws/scene once the FastAPI service is deployed.
 const wsUrl = new URLSearchParams(location.search).get('ws');
 if (wsUrl?.startsWith('wss://') || wsUrl?.startsWith('ws://localhost')) {
   engine.connect(wsUrl, state => console.log('live scene', state));
 }
-
 statusEl.textContent = 'Tap Enter walkthrough to start';
