@@ -27,6 +27,7 @@ const roofMat = new THREE.MeshStandardMaterial({
   color: 0x3f4347,
   roughness: 0.72,
   metalness: 0.08,
+  side: THREE.DoubleSide,
 });
 const fasciaMat = new THREE.MeshStandardMaterial({ color: 0xebe7df, roughness: 0.62 });
 const gutterMat = new THREE.MeshStandardMaterial({ color: 0x24282b, roughness: 0.4, metalness: 0.35 });
@@ -35,7 +36,7 @@ function roofPlane(points, material = roofMat) {
   const geometry = new THREE.BufferGeometry();
   const verts = new Float32Array(points.flat());
   geometry.setAttribute('position', new THREE.BufferAttribute(verts, 3));
-  geometry.setIndex([0, 1, 2, 0, 2, 3]);
+  geometry.setIndex(points.length === 3 ? [0,1,2] : [0,1,2,0,2,3]);
   geometry.computeVertexNormals();
   const mesh = new THREE.Mesh(geometry, material);
   mesh.castShadow = true;
@@ -50,14 +51,12 @@ function hippedRoof(cx, cz, width, depth, eaveY, ridgeY, ridgeFraction = 0.32) {
   const ridgeHalf = width * ridgeFraction / 2;
   const rx0 = cx - ridgeHalf, rx1 = cx + ridgeHalf;
 
-  // north and south roof fields
+  // north and south fields + triangular west/east hips
   roofPlane([[x0,eaveY,z1],[x1,eaveY,z1],[rx1,ridgeY,cz],[rx0,ridgeY,cz]]);
   roofPlane([[x1,eaveY,z0],[x0,eaveY,z0],[rx0,ridgeY,cz],[rx1,ridgeY,cz]]);
-  // west/east hips
-  roofPlane([[x0,eaveY,z0],[x0,eaveY,z1],[rx0,ridgeY,cz],[rx0,ridgeY,cz]]);
-  roofPlane([[x1,eaveY,z1],[x1,eaveY,z0],[rx1,ridgeY,cz],[rx1,ridgeY,cz]]);
+  roofPlane([[x0,eaveY,z0],[x0,eaveY,z1],[rx0,ridgeY,cz]]);
+  roofPlane([[x1,eaveY,z1],[x1,eaveY,z0],[rx1,ridgeY,cz]]);
 
-  // fascia boards
   const fasciaH = 0.13;
   const edges = [
     [cx, eaveY-.03, z0, width+.34, fasciaH, .09],
@@ -69,7 +68,6 @@ function hippedRoof(cx, cz, width, depth, eaveY, ridgeY, ridgeFraction = 0.32) {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), fasciaMat);
     m.position.set(x,y,z); m.castShadow = true; scene.add(m);
   }
-  // dark gutters along principal long eaves
   for (const z of [z0-.08,z1+.08]) {
     const g = new THREE.Mesh(new THREE.BoxGeometry(width+.38,.075,.075),gutterMat);
     g.position.set(cx,eaveY-.12,z);scene.add(g);
@@ -135,6 +133,5 @@ function updateAssetStatus(){
 updateAssetStatus();
 ASSET_MANIFEST.forEach(loadAsset);
 
-// Add a subtle roof/elevation note to the existing scene label.
 const label = document.getElementById('sceneLabel');
 if (label) label.textContent = 'Finished concept v5 · articulated multi-hip roof · EuroMax accessible villa + landscaped yard';
