@@ -2,7 +2,7 @@
 import { HOUSE, POOL, ROOMS, SITE } from './house-config.js';
 const ZN=HOUSE.z-HOUSE.depth/2, ZS=HOUSE.z+HOUSE.depth/2, XW=-HOUSE.width/2, XE=HOUSE.width/2;
 export const ARCHITECTURE_SPEC={
- metadata:{projectId:'anamarija-euromax',version:'1.5.0',status:'working-design',units:'m',sourceBasis:'Domprojekt Anamarija original programme expanded to working ~200 m² accessible design.',note:'Envelope, internal openings and provisional side glazing are explicitly classified. Roof volumes use hip geometry in the renderer; exact roof/window coordinates remain provisional pending architect drawings.'},
+ metadata:{projectId:'anamarija-euromax',version:'1.6.0',status:'working-design',units:'m',sourceBasis:'Domprojekt Anamarija original programme expanded to working ~200 m² accessible design.',note:'Envelope, openings, glazing and exterior architectural detailing are classified. Roof/window/drainage coordinates remain provisional pending architect drawings.'},
  site:{...SITE},house:{...HOUSE},pool:{...POOL},rooms:ROOMS.map(r=>({...r})),
  accessibility:{corridorTarget:1.50,internalDoorClearTarget:.90,accessibleDoorClearTarget:1.00,entranceDoorClearTarget:1.10,turningDiameterTarget:1.50,kitchenRouteTarget:1.20,walkingEyeHeight:1.65,wheelchairEyeHeight:1.20},
  materials:{mainFloor:'calacatta_porcelain',bedroomFloor:'warm_oak',wall:'warm_white_plaster',glazingFrame:'dark_bronze_aluminium',terrace:'large_format_stone'},
@@ -17,35 +17,20 @@ export const ARCHITECTURE_SPEC={
   {id:'south-zone-1',axis:'x',a:XW+.10,b:-6.00,fixed:-2.45,height:3.0,thickness:.20,zone:'internal'},{id:'south-zone-2',axis:'x',a:-4.80,b:-2.65,fixed:-2.45,height:3.0,thickness:.20,zone:'internal'},{id:'south-zone-3',axis:'x',a:-1.60,b:-.40,fixed:-2.45,height:3.0,thickness:.20,zone:'internal'},{id:'south-zone-4',axis:'x',a:.80,b:2.45,fixed:-2.45,height:3.0,thickness:.20,zone:'internal'}
  ],
  glazing:[
-  {id:'bedroom',axis:'x',a:-7.90,b:-5.00,fixed:ZN-.015,height:2.45,collision:true},
-  {id:'ensuite',axis:'x',a:-2.70,b:-.10,fixed:ZN-.015,height:2.45,collision:true},
-  {id:'living-left',axis:'x',a:1.90,b:3.90,fixed:ZN-.015,height:2.80,collision:true},
-  {id:'living-right',axis:'x',a:6.10,b:8.30,fixed:ZN-.015,height:2.80,collision:true},
-  {id:'accessible-west',axis:'z',a:3.15,b:5.55,fixed:XW+.015,height:2.20,sill:.55,collision:true,provisional:true},
-  {id:'bed1-west',axis:'z',a:-1.25,b:.55,fixed:XW+.015,height:1.65,sill:.72,collision:true,provisional:true},
-  {id:'kitchen-east',axis:'z',a:3.15,b:5.65,fixed:XE-.015,height:2.20,sill:.55,collision:true,provisional:true},
-  {id:'living-east',axis:'z',a:-1.80,b:.65,fixed:XE-.015,height:2.35,sill:.35,collision:true,provisional:true}
+  {id:'bedroom',axis:'x',a:-7.90,b:-5.00,fixed:ZN-.015,height:2.45,collision:true},{id:'ensuite',axis:'x',a:-2.70,b:-.10,fixed:ZN-.015,height:2.45,collision:true},{id:'living-left',axis:'x',a:1.90,b:3.90,fixed:ZN-.015,height:2.80,collision:true},{id:'living-right',axis:'x',a:6.10,b:8.30,fixed:ZN-.015,height:2.80,collision:true},
+  {id:'accessible-west',axis:'z',a:3.15,b:5.55,fixed:XW+.015,height:2.20,sill:.55,collision:true,provisional:true},{id:'bed1-west',axis:'z',a:-1.25,b:.55,fixed:XW+.015,height:1.65,sill:.72,collision:true,provisional:true},{id:'kitchen-east',axis:'z',a:3.15,b:5.65,fixed:XE-.015,height:2.20,sill:.55,collision:true,provisional:true},{id:'living-east',axis:'z',a:-1.80,b:.65,fixed:XE-.015,height:2.35,sill:.35,collision:true,provisional:true}
  ],
  openings:[
-  {id:'front-entrance',kind:'door',axis:'x',a:-.20,b:1.15,fixed:ZS,clearWidth:1.35,height:2.55,provisional:false,leaf:true,openAngle:-1.22},
-  {id:'terrace-portal',kind:'slider',axis:'x',a:3.90,b:6.10,fixed:ZN,clearWidth:2.20,height:2.80,provisional:true},
-  {id:'accessible-bedroom-door',kind:'door',axis:'x',a:-6.55,b:-5.15,fixed:2.25,clearWidth:1.40,height:2.30,provisional:true,leaf:true,openAngle:1.38},
-  {id:'accessible-bath-door',kind:'door',axis:'x',a:-3.80,b:-2.65,fixed:2.25,clearWidth:1.15,height:2.30,provisional:true,leaf:true,openAngle:-1.38},
-  {id:'office-door',kind:'door',axis:'x',a:-.05,b:1.25,fixed:2.25,clearWidth:1.30,height:2.30,provisional:true,leaf:true,openAngle:1.38},
-  {id:'bed1-door',kind:'door',axis:'z',a:1.25,b:2.45,fixed:-5.95,clearWidth:1.20,height:2.30,provisional:true,leaf:true,openAngle:-1.38},
-  {id:'bed2-door',kind:'door',axis:'z',a:1.20,b:2.30,fixed:-1.60,clearWidth:1.10,height:2.30,provisional:true,leaf:true,openAngle:1.38},
-  {id:'kitchen-hall-opening',kind:'open-circulation',axis:'z',a:.90,b:3.10,fixed:2.45,clearWidth:2.20,height:2.70,provisional:true},
-  {id:'master-door',kind:'door',axis:'x',a:-6.00,b:-4.80,fixed:-2.45,clearWidth:1.20,height:2.30,provisional:true,leaf:true,openAngle:1.38},
-  {id:'ensuite-door',kind:'door',axis:'x',a:-2.65,b:-1.60,fixed:-2.45,clearWidth:1.05,height:2.30,provisional:true,leaf:true,openAngle:-1.38},
-  {id:'wc-door',kind:'door',axis:'x',a:-.40,b:.80,fixed:-2.45,clearWidth:1.20,height:2.30,provisional:true,leaf:true,openAngle:1.38}
+  {id:'front-entrance',kind:'door',axis:'x',a:-.20,b:1.15,fixed:ZS,clearWidth:1.35,height:2.55,provisional:false,leaf:true,openAngle:-1.22},{id:'terrace-portal',kind:'slider',axis:'x',a:3.90,b:6.10,fixed:ZN,clearWidth:2.20,height:2.80,provisional:true},
+  {id:'accessible-bedroom-door',kind:'door',axis:'x',a:-6.55,b:-5.15,fixed:2.25,clearWidth:1.40,height:2.30,provisional:true,leaf:true,openAngle:1.38},{id:'accessible-bath-door',kind:'door',axis:'x',a:-3.80,b:-2.65,fixed:2.25,clearWidth:1.15,height:2.30,provisional:true,leaf:true,openAngle:-1.38},{id:'office-door',kind:'door',axis:'x',a:-.05,b:1.25,fixed:2.25,clearWidth:1.30,height:2.30,provisional:true,leaf:true,openAngle:1.38},
+  {id:'bed1-door',kind:'door',axis:'z',a:1.25,b:2.45,fixed:-5.95,clearWidth:1.20,height:2.30,provisional:true,leaf:true,openAngle:-1.38},{id:'bed2-door',kind:'door',axis:'z',a:1.20,b:2.30,fixed:-1.60,clearWidth:1.10,height:2.30,provisional:true,leaf:true,openAngle:1.38},{id:'kitchen-hall-opening',kind:'open-circulation',axis:'z',a:.90,b:3.10,fixed:2.45,clearWidth:2.20,height:2.70,provisional:true},
+  {id:'master-door',kind:'door',axis:'x',a:-6.00,b:-4.80,fixed:-2.45,clearWidth:1.20,height:2.30,provisional:true,leaf:true,openAngle:1.38},{id:'ensuite-door',kind:'door',axis:'x',a:-2.65,b:-1.60,fixed:-2.45,clearWidth:1.05,height:2.30,provisional:true,leaf:true,openAngle:-1.38},{id:'wc-door',kind:'door',axis:'x',a:-.40,b:.80,fixed:-2.45,clearWidth:1.20,height:2.30,provisional:true,leaf:true,openAngle:1.38}
  ],
  ceilings:[{id:'continuous-house-deck',x:0,z:HOUSE.z,width:HOUSE.width+.02,depth:HOUSE.depth+.02,height:3.20,thickness:.12}],
  roof:{style:'articulated-multi-hip',geometry:'hip',eaveHeight:3.38,overhang:.55,volumes:[
-  {id:'west-wing',x:-6.3,z:HOUSE.z,width:8.4,depth:HOUSE.depth,ridgeHeight:5.35,ridgeAxis:'z',hipInset:2.15},
-  {id:'central-entry',x:-1.2,z:4.4,width:3.0,depth:7.0,ridgeHeight:4.72,ridgeAxis:'z',hipInset:1.20},
-  {id:'living-wing',x:5.15,z:HOUSE.z,width:10.7,depth:HOUSE.depth,ridgeHeight:5.60,ridgeAxis:'z',hipInset:2.35},
-  {id:'terrace-canopy',x:4.7,z:ZN-1.75,width:11.6,depth:3.5,ridgeHeight:4.35,ridgeAxis:'x',hipInset:1.35}
- ]},
- facade:{accents:[{id:'entrance-stone',x:-.75,z:ZS+.115,width:2.15,height:3.05},{id:'terrace-stone',x:8.95,z:ZN-.115,width:1.25,height:3.05}]},terrace:{x:4.70,z:ZN-2.05,width:11.60,depth:4.10,level:.035,finish:'large_format_stone'}
+  {id:'west-wing',x:-6.3,z:HOUSE.z,width:8.4,depth:HOUSE.depth,ridgeHeight:5.35,ridgeAxis:'z',hipInset:2.15},{id:'central-entry',x:-1.2,z:4.4,width:3.0,depth:7.0,ridgeHeight:4.72,ridgeAxis:'z',hipInset:1.20},{id:'living-wing',x:5.15,z:HOUSE.z,width:10.7,depth:HOUSE.depth,ridgeHeight:5.60,ridgeAxis:'z',hipInset:2.35},{id:'terrace-canopy',x:4.7,z:ZN-1.75,width:11.6,depth:3.5,ridgeHeight:4.35,ridgeAxis:'x',hipInset:1.35}
+ ],downpipes:[{id:'front-west',x:XW+.18,z:ZS+.13,height:3.25},{id:'front-east',x:XE-.18,z:ZS+.13,height:3.25},{id:'terrace-east',x:9.95,z:ZN-.18,height:3.25},{id:'rear-west',x:XW+.18,z:ZN-.13,height:3.25}]},
+ facade:{accents:[{id:'entrance-stone',x:-.75,z:ZS+.115,width:2.15,height:3.05},{id:'terrace-stone',x:8.95,z:ZN-.115,width:1.25,height:3.05}],entrance:{x:.475,z:ZS+.42,width:2.55,depth:.78,height:3.05,stepFree:true},terracePosts:[{id:'p1',x:.05,z:ZN-3.55},{id:'p2',x:4.70,z:ZN-3.55},{id:'p3',x:9.35,z:ZN-3.55}]},
+ terrace:{x:4.70,z:ZN-2.05,width:11.60,depth:4.10,level:.035,finish:'large_format_stone'}
 };
 export function getArchitectureWall(id){return ARCHITECTURE_SPEC.walls.find(w=>w.id===id)||null;}
