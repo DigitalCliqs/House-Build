@@ -4,13 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       asset_id:
-        description: 'Verified Poly Haven asset ID (for example modern_arm_chair_01)'
+        description: 'Verified Poly Haven asset ID'
         required: true
         type: string
       destination:
         description: 'Repository directory under assets/models/'
         required: true
         type: string
+  push:
+    paths:
+      - 'assets/ingest-queue.json'
 
 permissions:
   contents: write
@@ -20,69 +23,81 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Resolve and download official glTF package
+      - name: Resolve and download official glTF packages
         env:
-          ASSET_ID: ${{ inputs.asset_id }}
-          DESTINATION: ${{ inputs.destination }}
+          DISPATCH_ASSET: ${{ inputs.asset_id }}
+          DISPATCH_DEST: ${{ inputs.destination }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           python - <<'PY'
-          import hashlib, json, os, pathlib, re, urllib.request
+          import hashlib, json, os, pathlib, re, urllib.parse, urllib.request
 
-          asset_id=os.environ['ASSET_ID'].strip()
-          destination=os.environ['DESTINATION'].strip().strip('/')
-          if not re.fullmatch(r'[A-Za-z0-9_.-]+', asset_id):
-              raise SystemExit('Invalid asset_id')
-          if not re.fullmatch(r'[A-Za-z0-9_./-]+', destination) or '..' in destination:
-              raise SystemExit('Invalid destination')
-          out=pathlib.Path('assets/models')/destination
-          out.mkdir(parents=True,exist_ok=True)
-          req=urllib.request.Request(f'https://api.polyhaven.com/files/{asset_id}',headers={'User-Agent':'AnamarijaHouseBuild/1.0 (DigitalCliqs/House-Build)'})
-          with urllib.request.urlopen(req,timeout=30) as r:
-              files=json.load(r)
+          def jobs():
+              if os.environ.get('EVENT_NAME') == 'workflow_dispatch':
+                  return [{'assetId':os.environ['DISPATCH_ASSET'],'destination':os.environ['DISPATCH_DEST']}]
+              q=pathlib.Path('assets/ingest-queue.json')
+              if not q.exists(): raise SystemExit('Queue file missing')
+              data=json.loads(q.read_text())
+              return data.get('assets',[])
 
-          # Prefer the smallest glTF variant exposed by the official API; download its declared dependencies too.
-          candidates=[]
-          def walk(node,path=()):
-              if isinstance(node,dict):
-                  if isinstance(node.get('url'),str): candidates.append((path,node))
-                  for k,v in node.items(): walk(v,path+(str(k),))
-              elif isinstance(node,list):
-                  for i,v in enumerate(node): walk(v,path+(str(i),))
-          walk(files)
-          gltfs=[(p,n) for p,n in candidates if n['url'].lower().split('?')[0].endswith(('.gltf','.glb'))]
-          if not gltfs:
-              raise SystemExit('Official API returned no glTF/GLB file for this asset')
-          p,primary=min(gltfs,key=lambda x:int(x[1].get('size') or 10**18))
-          manifest=[]
-          seen=set()
-          def download(entry):
-              url=entry.get('url');
-              if not url or url in seen:return
-              seen.add(url)
-              name=pathlib.Path(urllib.parse.unquote(urllib.parse.urlparse(url).path)).name
-              target=out/name
-              req=urllib.request.Request(url,headers={'User-Agent':'AnamarijaHouseBuild/1.0 (DigitalCliqs/House-Build)'})
-              with urllib.request.urlopen(req,timeout=120) as r: data=r.read()
-              md5=hashlib.md5(data).hexdigest()
-              expected=entry.get('md5')
-              if expected and md5.lower()!=expected.lower(): raise SystemExit(f'MD5 mismatch for {name}')
-              target.write_bytes(data)
-              manifest.append({'file':name,'bytes':len(data),'md5':md5,'source':url})
-              for dep in entry.get('include',[]) if isinstance(entry.get('include'),list) else []:
-                  if isinstance(dep,dict): download(dep)
-          import urllib.parse
-          download(primary)
-          (out/'polyhaven-source.json').write_text(json.dumps({'assetId':asset_id,'api':'https://api.polyhaven.com','license':'CC0','selectedPath':p,'files':manifest},indent=2)+'\n')
-          print(json.dumps(manifest,indent=2))
+          def safe_job(j):
+              asset_id=str(j['assetId']).strip(); destination=str(j['destination']).strip().strip('/')
+              if not re.fullmatch(r'[a-z0-9_]+',asset_id): raise SystemExit(f'Invalid assetId: {asset_id}')
+              if not re.fullmatch(r'[A-Za-z0-9_./-]+',destination) or '..' in destination: raise SystemExit(f'Invalid destination: {destination}')
+              return asset_id,destination
+
+          def download_asset(asset_id,destination):
+              out=pathlib.Path('assets/models')/destination; out.mkdir(parents=True,exist_ok=True)
+              headers={'User-Agent':'AnamarijaHouseBuild/1.1 (DigitalCliqs/House-Build)','Accept':'application/json'}
+              with urllib.request.urlopen(urllib.request.Request(f'https://api.polyhaven.com/files/{asset_id}',headers=headers),timeout=30) as r: files=json.load(r)
+              candidates=[]
+              def walk(node,path=()):
+                  if isinstance(node,dict):
+                      if isinstance(node.get('url'),str): candidates.append((path,node))
+                      for k,v in node.items(): walk(v,path+(str(k),))
+                  elif isinstance(node,list):
+                      for i,v in enumerate(node): walk(v,path+(str(i),))
+              walk(files)
+              gltfs=[(p,n) for p,n in candidates if n['url'].lower().split('?')[0].endswith(('.gltf','.glb'))]
+              if not gltfs: raise SystemExit(f'No official glTF/GLB for {asset_id}')
+              # Prefer 1K/2K glTF for web delivery, then smallest package.
+              def rank(item):
+                  p,n=item; s='/'.join(p).lower(); pref=0 if '/1k/' in '/'+s+'/' else 1 if '/2k/' in '/'+s+'/' else 2
+                  return (pref,int(n.get('size') or 10**18))
+              p,primary=min(gltfs,key=rank)
+              manifest=[]; seen=set()
+              def download(entry):
+                  url=entry.get('url')
+                  if not url or url in seen:return
+                  seen.add(url); name=pathlib.Path(urllib.parse.unquote(urllib.parse.urlparse(url).path)).name; target=out/name
+                  req=urllib.request.Request(url,headers={'User-Agent':headers['User-Agent']})
+                  with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
+                  md5=hashlib.md5(data).hexdigest(); expected=entry.get('md5')
+                  if expected and md5.lower()!=expected.lower(): raise SystemExit(f'MD5 mismatch for {name}')
+                  target.write_bytes(data); manifest.append({'file':name,'bytes':len(data),'md5':md5,'source':url})
+                  deps=entry.get('include') or entry.get('includes') or []
+                  if isinstance(deps,dict): deps=list(deps.values())
+                  if isinstance(deps,list):
+                      for dep in deps:
+                          if isinstance(dep,dict): download(dep)
+              download(primary)
+              (out/'polyhaven-source.json').write_text(json.dumps({'assetId':asset_id,'api':'https://api.polyhaven.com','license':'CC0','selectedPath':p,'files':manifest},indent=2)+'\n')
+              print(asset_id, json.dumps(manifest,indent=2))
+
+          for j in jobs():
+              aid,dst=safe_job(j); download_asset(aid,dst)
           PY
-      - name: Commit downloaded asset
+      - name: Commit downloaded assets
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add assets/models/
           git diff --cached --quiet && exit 0
-          git commit -m "Ingest Poly Haven asset ${{ inputs.asset_id }}"
+          git commit -m "Ingest verified Poly Haven production assets"
+          git pull --rebase origin main
           git push
