@@ -1,0 +1,42 @@
+{
+  "assetId": "modern_wooden_cabinet",
+  "api": "https://api.polyhaven.com",
+  "license": "CC0",
+  "selectedPath": [
+    "gltf",
+    "1k",
+    "gltf"
+  ],
+  "files": [
+    {
+      "file": "modern_wooden_cabinet_1k.gltf",
+      "bytes": 10960,
+      "md5": "623406579e948eb75ff52ec1498085c8",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/modern_wooden_cabinet/modern_wooden_cabinet_1k.gltf"
+    },
+    {
+      "file": "modern_wooden_cabinet.bin",
+      "bytes": 1170136,
+      "md5": "0a619e6311e6b04b92e9f226f3d0978d",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/modern_wooden_cabinet/modern_wooden_cabinet.bin"
+    },
+    {
+      "file": "modern_wooden_cabinet_nor_gl_1k.jpg",
+      "bytes": 430053,
+      "md5": "62477103e44ac1b2746c9bb201f89e06",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_wooden_cabinet/modern_wooden_cabinet_nor_gl_1k.jpg"
+    },
+    {
+      "file": "modern_wooden_cabinet_arm_1k.jpg",
+      "bytes": 574020,
+      "md5": "bb821c89979d89ce2421df13af67fb07",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_wooden_cabinet/modern_wooden_cabinet_arm_1k.jpg"
+    },
+    {
+      "file": "modern_wooden_cabinet_diff_1k.jpg",
+      "bytes": 670353,
+      "md5": "9c7e897741dd9aea6382f04e710d739b",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_wooden_cabinet/modern_wooden_cabinet_diff_1k.jpg"
+    }
+  ]
+}

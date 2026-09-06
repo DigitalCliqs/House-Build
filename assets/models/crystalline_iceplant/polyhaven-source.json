@@ -1,0 +1,42 @@
+{
+  "assetId": "crystalline_iceplant",
+  "api": "https://api.polyhaven.com",
+  "license": "CC0",
+  "selectedPath": [
+    "gltf",
+    "1k",
+    "gltf"
+  ],
+  "files": [
+    {
+      "file": "crystalline_iceplant_1k.gltf",
+      "bytes": 13607,
+      "md5": "290f5e514fcdd5205642c04d065aa286",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/crystalline_iceplant/crystalline_iceplant_1k.gltf"
+    },
+    {
+      "file": "crystalline_iceplant_nor_gl_1k.jpg",
+      "bytes": 907570,
+      "md5": "9f0175d0d73de912a947d949a8fd7227",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/crystalline_iceplant/crystalline_iceplant_nor_gl_1k.jpg"
+    },
+    {
+      "file": "crystalline_iceplant_arm_1k.jpg",
+      "bytes": 850713,
+      "md5": "cf50a6d0c73e46620e490c5df6250b3a",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/crystalline_iceplant/crystalline_iceplant_arm_1k.jpg"
+    },
+    {
+      "file": "crystalline_iceplant_diff_1k.jpg",
+      "bytes": 510658,
+      "md5": "bf5b424efbb8c19ab158a565e5f51bd6",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/crystalline_iceplant/crystalline_iceplant_diff_1k.jpg"
+    },
+    {
+      "file": "crystalline_iceplant.bin",
+      "bytes": 330436,
+      "md5": "4074e1d087458162c160b8312163acea",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/crystalline_iceplant/crystalline_iceplant.bin"
+    }
+  ]
+}

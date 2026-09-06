@@ -1,0 +1,42 @@
+{
+  "assetId": "modern_coffee_table_01",
+  "api": "https://api.polyhaven.com",
+  "license": "CC0",
+  "selectedPath": [
+    "gltf",
+    "1k",
+    "gltf"
+  ],
+  "files": [
+    {
+      "file": "modern_coffee_table_01_1k.gltf",
+      "bytes": 2771,
+      "md5": "f1c079ab5bc307630258cf3b40910511",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/modern_coffee_table_01/modern_coffee_table_01_1k.gltf"
+    },
+    {
+      "file": "modern_coffee_table_01.bin",
+      "bytes": 154864,
+      "md5": "6e8f65bff935af308eab9eff062f6daa",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/modern_coffee_table_01/modern_coffee_table_01.bin"
+    },
+    {
+      "file": "modern_coffee_table_01_rough_1k.jpg",
+      "bytes": 403959,
+      "md5": "6ccbc448fa0e2bed32eac52511e84e2c",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_coffee_table_01/modern_coffee_table_01_rough_1k.jpg"
+    },
+    {
+      "file": "modern_coffee_table_01_diff_1k.jpg",
+      "bytes": 410569,
+      "md5": "356014e027b59c21b3c99ac112e645f9",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_coffee_table_01/modern_coffee_table_01_diff_1k.jpg"
+    },
+    {
+      "file": "modern_coffee_table_01_nor_gl_1k.jpg",
+      "bytes": 359134,
+      "md5": "d263e6131abc518760d6771390bc5066",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_coffee_table_01/modern_coffee_table_01_nor_gl_1k.jpg"
+    }
+  ]
+}

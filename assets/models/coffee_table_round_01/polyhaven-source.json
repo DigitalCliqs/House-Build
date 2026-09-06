@@ -1,0 +1,42 @@
+{
+  "assetId": "coffee_table_round_01",
+  "api": "https://api.polyhaven.com",
+  "license": "CC0",
+  "selectedPath": [
+    "gltf",
+    "1k",
+    "gltf"
+  ],
+  "files": [
+    {
+      "file": "coffee_table_round_01_1k.gltf",
+      "bytes": 2776,
+      "md5": "fa8772e8942e1863230b6745105c9a8e",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/coffee_table_round_01/coffee_table_round_01_1k.gltf"
+    },
+    {
+      "file": "coffee_table_round_01_diff_1k.jpg",
+      "bytes": 447037,
+      "md5": "601977ab1b864988194728e1dda076a8",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/coffee_table_round_01/coffee_table_round_01_diff_1k.jpg"
+    },
+    {
+      "file": "coffee_table_round_01_arm_1k.jpg",
+      "bytes": 721708,
+      "md5": "b44425836ab0c932fe4ff136ce6f2fe8",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/coffee_table_round_01/coffee_table_round_01_arm_1k.jpg"
+    },
+    {
+      "file": "coffee_table_round_01.bin",
+      "bytes": 131112,
+      "md5": "a664b067fa0ae9b6e0a8fa5878986816",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/coffee_table_round_01/coffee_table_round_01.bin"
+    },
+    {
+      "file": "coffee_table_round_01_nor_gl_1k.jpg",
+      "bytes": 260520,
+      "md5": "81a9885a83ff0b259514e8bce38b6b69",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/coffee_table_round_01/coffee_table_round_01_nor_gl_1k.jpg"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "assetId": "potted_plant_01",
+  "api": "https://api.polyhaven.com",
+  "license": "CC0",
+  "selectedPath": [
+    "gltf",
+    "1k",
+    "gltf"
+  ],
+  "files": [
+    {
+      "file": "potted_plant_01_1k.gltf",
+      "bytes": 7969,
+      "md5": "199e9e3d68f5447142db4066d60ae3f0",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/potted_plant_01/potted_plant_01_1k.gltf"
+    },
+    {
+      "file": "potted_plant_01_pot_rough_1k.jpg",
+      "bytes": 173192,
+      "md5": "8f2e400f94843a9239229bfe99d16688",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_01/potted_plant_01_pot_rough_1k.jpg"
+    },
+    {
+      "file": "potted_plant_01_leaves_nor_gl_1k.jpg",
+      "bytes": 177105,
+      "md5": "0a7ea996bb2a4e9e19a5299a5b654406",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_01/potted_plant_01_leaves_nor_gl_1k.jpg"
+    },
+    {
+      "file": "potted_plant_01_pot_diff_1k.jpg",
+      "bytes": 204900,
+      "md5": "67114dcd68232a6da88c627e144e65c4",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_01/potted_plant_01_pot_diff_1k.jpg"
+    },
+    {
+      "file": "potted_plant_01.bin",
+      "bytes": 5345188,
+      "md5": "18377bd8d99b20a8d5fc5cf03cbf94b2",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/potted_plant_01/potted_plant_01.bin"
+    },
+    {
+      "file": "potted_plant_01_leaves_rough_1k.jpg",
+      "bytes": 91706,
+      "md5": "6251bfd59ced0360c16d9c286adbb131",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_01/potted_plant_01_leaves_rough_1k.jpg"
+    },
+    {
+      "file": "potted_plant_01_pot_nor_gl_1k.jpg",
+      "bytes": 200349,
+      "md5": "7388c8cba421175fd70969df077988a1",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_01/potted_plant_01_pot_nor_gl_1k.jpg"
+    },
+    {
+      "file": "potted_plant_01_leaves_diff_1k.jpg",
+      "bytes": 124730,
+      "md5": "8cbaaa24c18c61be4201c473773dbffc",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_01/potted_plant_01_leaves_diff_1k.jpg"
+    }
+  ]
+}
