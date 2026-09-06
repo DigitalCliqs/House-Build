@@ -26,8 +26,12 @@ export function connectLiveScene({
     socket.addEventListener('message', event => {
       try {
         const message = JSON.parse(event.data);
-        if (message.type === 'scene.snapshot') onSnapshot(message.scene, message);
-        else if (message.type === 'scene.updated') onUpdate(message.scene, message);
+        const handler = message.type === 'scene.snapshot' ? onSnapshot : message.type === 'scene.updated' ? onUpdate : null;
+        if (handler) {
+          Promise.resolve(handler(message.scene, message)).catch(error => {
+            onStatus({ state: 'error', error });
+          });
+        }
       } catch (error) {
         onStatus({ state: 'error', error });
       }
@@ -60,7 +64,7 @@ export function connectLiveScene({
   };
 }
 
-export function applySceneToEngine(scene, engine) {
+export async function applySceneToEngine(scene, engine) {
   if (!engine) throw new Error('Scene engine adapter is required');
   if (typeof engine.beginTransaction === 'function') engine.beginTransaction();
   try {
@@ -69,13 +73,13 @@ export function applySceneToEngine(scene, engine) {
 
     for (const [id, object] of Object.entries(incoming)) {
       existingIds.delete(id);
-      if (typeof engine.upsertObject === 'function') engine.upsertObject(id, object);
+      if (typeof engine.upsertObject === 'function') await engine.upsertObject(id, object);
     }
 
     for (const id of existingIds) {
-      if (typeof engine.removeObject === 'function') engine.removeObject(id);
+      if (typeof engine.removeObject === 'function') await engine.removeObject(id);
     }
   } finally {
-    if (typeof engine.endTransaction === 'function') engine.endTransaction();
+    if (typeof engine.endTransaction === 'function') await engine.endTransaction();
   }
 }
