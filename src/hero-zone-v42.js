@@ -1,8 +1,8 @@
 // V42 reference-led kitchen/living refinement for the enlarged Anamarija hero route.
+import { createTerracePoolV42 } from './terrace-pool-v42.js';
 export function createHeroZoneV42({THREE,scene}={}){
  if(!THREE||!scene)throw new Error('THREE and scene are required');
  const root=new THREE.Group();root.name='hero-zone-v42';scene.add(root);
- // Hide only controlled procedural objects that this pass explicitly replaces.
  const superseded=['living-sofa-seat-long','living-sofa-back-long','living-sofa-chaise','living-sofa-chaise-back','living-coffee-table','living-coffee-table-base','premium:island-base','premium:island-top','premium:island-waterfall-left','premium:island-waterfall-right','premium:kitchen-tall-units','premium:kitchen-appliance-bank'];
  superseded.forEach(name=>{const o=scene.getObjectByName(name);if(o)o.visible=false});
  const ivory=new THREE.MeshPhysicalMaterial({color:0xeee8df,roughness:.82,sheen:1,sheenColor:new THREE.Color(0xf3e9dd)});
@@ -47,6 +47,7 @@ export function createHeroZoneV42({THREE,scene}={}){
  box('v42:slider-glass',[5.00,1.58,-3.905],[2.56,3.05,.012],glass,false);
  box('v42:curtain-pocket',[5.18,3.74,-3.72],[7.35,.10,.16],oakDark,false);
  box('v42:living-cove-strip',[5.18,3.75,2.16],[7.15,.025,.025],warm,false);
- root.userData.pass='v42-kitchen-living';
- return{root,dispose(){root.traverse(n=>n.geometry?.dispose?.());mats.forEach(m=>m.dispose());scene.remove(root)}};
+ const terracePool=createTerracePoolV42({THREE,scene});
+ root.userData.pass='v42-kitchen-living-terrace-pool';
+ return{root,terracePool,dispose(){terracePool.dispose();root.traverse(n=>n.geometry?.dispose?.());mats.forEach(m=>m.dispose());scene.remove(root)}};
 }
