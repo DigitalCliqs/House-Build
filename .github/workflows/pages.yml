@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate six-axis tour assets
+        run: node scripts/validate-tour-cubemaps.mjs
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
