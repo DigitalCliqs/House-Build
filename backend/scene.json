@@ -1,9 +1,11 @@
 {
   "metadata": {
     "projectId": "anamarija-euromax",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "units": "meters",
-    "updatedAt": "2026-09-06T00:00:00Z"
+    "rotationUnits": "radians",
+    "coordinateSystem": "Three.js Y-up",
+    "updatedAt": "2026-09-06T14:56:42Z"
   },
   "objects": {
     "living.sofa.main": {
