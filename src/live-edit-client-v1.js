@@ -1,6 +1,26 @@
 // Realtime scene sync client for the next-generation geometry engine.
 // It is intentionally not imported by the current cubemap-only tour yet.
 
+function revisionKey(scene, message) {
+  const raw = message?.revision ?? scene?.metadata?.revision ?? scene?.metadata?.version ?? scene?.metadata?.updatedAt;
+  if (typeof raw === 'number' && Number.isFinite(raw)) return { kind: 'number', value: raw };
+  if (typeof raw === 'string') {
+    const numeric = Number(raw);
+    if (Number.isFinite(numeric) && raw.trim() !== '') return { kind: 'number', value: numeric };
+    const time = Date.parse(raw);
+    if (Number.isFinite(time)) return { kind: 'number', value: time };
+    return { kind: 'string', value: raw };
+  }
+  return null;
+}
+
+function isNewer(next, current) {
+  if (!next || !current) return true;
+  if (next.kind !== current.kind) return true;
+  if (next.kind === 'number') return next.value > current.value;
+  return next.value !== current.value;
+}
+
 export function connectLiveScene({
   url,
   onSnapshot = () => {},
@@ -13,6 +33,24 @@ export function connectLiveScene({
   let closedByClient = false;
   let retryMs = 1000;
   let retryTimer = null;
+  let applyQueue = Promise.resolve();
+  let lastAppliedRevision = null;
+
+  const enqueue = (handler, scene, message) => {
+    const nextRevision = revisionKey(scene, message);
+    applyQueue = applyQueue
+      .then(async () => {
+        if (!isNewer(nextRevision, lastAppliedRevision)) {
+          onStatus({ state: 'stale-update-skipped', revision: nextRevision });
+          return;
+        }
+        await handler(scene, message);
+        if (nextRevision) lastAppliedRevision = nextRevision;
+      })
+      .catch(error => {
+        onStatus({ state: 'error', error });
+      });
+  };
 
   const connect = () => {
     onStatus({ state: 'connecting' });
@@ -27,11 +65,7 @@ export function connectLiveScene({
       try {
         const message = JSON.parse(event.data);
         const handler = message.type === 'scene.snapshot' ? onSnapshot : message.type === 'scene.updated' ? onUpdate : null;
-        if (handler) {
-          Promise.resolve(handler(message.scene, message)).catch(error => {
-            onStatus({ state: 'error', error });
-          });
-        }
+        if (handler) enqueue(handler, message.scene, message);
       } catch (error) {
         onStatus({ state: 'error', error });
       }
@@ -66,7 +100,7 @@ export function connectLiveScene({
 
 export async function applySceneToEngine(scene, engine) {
   if (!engine) throw new Error('Scene engine adapter is required');
-  if (typeof engine.beginTransaction === 'function') engine.beginTransaction();
+  if (typeof engine.beginTransaction === 'function') await engine.beginTransaction();
   try {
     const incoming = scene?.objects || {};
     const existingIds = new Set(typeof engine.listObjectIds === 'function' ? engine.listObjectIds() : []);
