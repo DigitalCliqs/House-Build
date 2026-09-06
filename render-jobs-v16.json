@@ -1,0 +1,37 @@
+{
+  "version": "16.1",
+  "quality": {
+    "masterFace": 4096,
+    "deliveryFace": 2048,
+    "format": "jpg",
+    "colorSpace": "sRGB",
+    "faces": ["px","nx","py","ny","pz","nz"],
+    "walkingEyeHeightM": 1.65,
+    "wheelchairEyeHeightM": 1.20
+  },
+  "reference": {
+    "designBoard": "Domprojekt Anamarija photoreal render board supplied by user",
+    "style": "premium warm contemporary; Calacatta-style main flooring, oak/herringbone private rooms, warm oak joinery, champagne/black metal, soft indirect lighting, realistic glazing, landscaped garden and pool",
+    "consistencyRule": "All six faces at a node must depict exactly the same geometry, furniture, lighting state and materials from one camera origin. Adjacent nodes must preserve object placement and architectural sightlines."
+  },
+  "primaryRoute": [
+    {"id":"exterior-front","priority":1},
+    {"id":"entrance","priority":2},
+    {"id":"hallway","priority":3},
+    {"id":"living","priority":4},
+    {"id":"dining","priority":5},
+    {"id":"kitchen","priority":6},
+    {"id":"terrace","priority":7},
+    {"id":"pool","priority":8}
+  ],
+  "acceptance": [
+    "No stretched flat-image panoramas",
+    "Full 360 yaw and near-180 pitch coverage",
+    "No missing cube face",
+    "No furniture duplication or disappearance across face seams",
+    "Door/window positions match the approved plan",
+    "Lighting direction and reflections remain continuous at seams",
+    "Readable fine material detail on high-DPI phones",
+    "Hotspots correspond to real spatial exits and sightlines"
+  ]
+}
