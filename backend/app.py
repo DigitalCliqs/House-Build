@@ -10,8 +10,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 SCENE_PATH = Path(os.environ.get("SCENE_PATH", Path(__file__).with_name("scene.json")))
+ASSET_REGISTRY_PATH = Path(
+    os.environ.get(
+        "ASSET_REGISTRY_PATH",
+        Path(__file__).resolve().parents[1] / "assets" / "asset-registry.json",
+    )
+)
 
-app = FastAPI(title="Anamarija Live Scene API", version="1.0.0")
+app = FastAPI(title="Anamarija Live Scene API", version="1.1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:8000,https://digitalcliqs.github.io").split(",") if o.strip()],
@@ -81,6 +87,33 @@ def save_scene(scene: dict[str, Any]) -> None:
     SCENE_PATH.write_text(json.dumps(scene, indent=2) + "\n", encoding="utf-8")
 
 
+def load_asset_registry() -> dict[str, Any]:
+    if not ASSET_REGISTRY_PATH.exists():
+        return {"metadata": {"warning": "asset registry missing"}, "models": {}, "materials": {}, "environments": {}}
+    return json.loads(ASSET_REGISTRY_PATH.read_text(encoding="utf-8"))
+
+
+def compact_asset_context(registry: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "models": {
+            key: {
+                "status": value.get("status", "unknown"),
+                "type": value.get("type"),
+                "room": value.get("room"),
+            }
+            for key, value in registry.get("models", {}).items()
+        },
+        "materials": {
+            key: {"status": value.get("status", "unknown")}
+            for key, value in registry.get("materials", {}).items()
+        },
+        "environments": {
+            key: {"status": value.get("status", "unknown")}
+            for key, value in registry.get("environments", {}).items()
+        },
+    }
+
+
 def _vec3(name: str, value: list[float] | None) -> list[float] | None:
     if value is None:
         return None
@@ -89,7 +122,19 @@ def _vec3(name: str, value: list[float] | None) -> list[float] | None:
     return [float(v) for v in value]
 
 
-def apply_patch(scene: dict[str, Any], patch: ScenePatch) -> None:
+def validate_patch_assets(patch: ScenePatch, registry: dict[str, Any]) -> None:
+    if patch.action == "delete":
+        return
+
+    if patch.asset is not None and patch.asset not in registry.get("models", {}):
+        raise HTTPException(status_code=422, detail=f"Unknown asset ID: {patch.asset}")
+
+    if patch.material is not None and patch.material not in registry.get("materials", {}):
+        raise HTTPException(status_code=422, detail=f"Unknown material ID: {patch.material}")
+
+
+def apply_patch(scene: dict[str, Any], patch: ScenePatch, registry: dict[str, Any]) -> None:
+    validate_patch_assets(patch, registry)
     objects = scene.setdefault("objects", {})
     item_id = patch.item_id
 
@@ -102,14 +147,16 @@ def apply_patch(scene: dict[str, Any], patch: ScenePatch) -> None:
     if patch.action == "add":
         if item_id in objects:
             raise HTTPException(status_code=409, detail=f"Object already exists: {item_id}")
+        if patch.asset is None:
+            raise HTTPException(status_code=422, detail="New scene objects require a registered asset ID")
         objects[item_id] = {
             "type": patch.item_type or "furniture",
             "room": patch.room or "unassigned",
-            "asset": patch.asset or "placeholder",
+            "asset": patch.asset,
             "position": _vec3("position", patch.position) or [0.0, 0.0, 0.0],
             "rotation": _vec3("rotation", patch.rotation) or [0.0, 0.0, 0.0],
             "scale": _vec3("scale", patch.scale) or [1.0, 1.0, 1.0],
-            "material": patch.material or "default",
+            "material": patch.material,
         }
         return
 
@@ -127,10 +174,10 @@ def apply_patch(scene: dict[str, Any], patch: ScenePatch) -> None:
             item[key] = value
 
 
-def apply_batch(scene: dict[str, Any], batch: ScenePatchBatch) -> dict[str, Any]:
+def apply_batch(scene: dict[str, Any], batch: ScenePatchBatch, registry: dict[str, Any]) -> dict[str, Any]:
     before = deepcopy(scene)
     for patch in batch.patches:
-        apply_patch(scene, patch)
+        apply_patch(scene, patch, registry)
 
     metadata = scene.setdefault("metadata", {})
     metadata["updatedAt"] = _now()
@@ -147,7 +194,7 @@ def apply_batch(scene: dict[str, Any], batch: ScenePatchBatch) -> dict[str, Any]
 SCENE_TOOL = {
     "type": "function",
     "name": "apply_scene_patches",
-    "description": "Apply one or more precise edits to the canonical 3D house scene.",
+    "description": "Apply one or more precise edits to the canonical 3D house scene using only registered asset and material IDs.",
     "strict": True,
     "parameters": {
         "type": "object",
@@ -179,7 +226,7 @@ SCENE_TOOL = {
 }
 
 
-def prompt_to_batch(prompt: str, scene: dict[str, Any]) -> ScenePatchBatch:
+def prompt_to_batch(prompt: str, scene: dict[str, Any], registry: dict[str, Any]) -> ScenePatchBatch:
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         raise HTTPException(status_code=503, detail="OPENAI_API_KEY is not configured")
@@ -195,6 +242,7 @@ def prompt_to_batch(prompt: str, scene: dict[str, Any]) -> ScenePatchBatch:
         "metadata": scene.get("metadata", {}),
         "objects": scene.get("objects", {}),
     }
+    asset_context = compact_asset_context(registry)
 
     response = client.responses.create(
         model=model,
@@ -204,10 +252,16 @@ def prompt_to_batch(prompt: str, scene: dict[str, Any]) -> ScenePatchBatch:
                 "content": (
                     "You are the spatial editing agent for a dimensioned single-storey house. "
                     "Translate the user's instruction into the smallest safe set of scene patches. "
-                    "Use meters. Never invent an existing object ID. Preserve unrelated objects. "
+                    "Coordinates use meters, Y-up, and rotations are radians in XYZ order. "
+                    "Never invent an existing object ID. Preserve unrelated objects. "
+                    "For add or asset/material replacement operations, use ONLY IDs listed in the asset registry. "
+                    "A registry status of planned means the ID is valid but the visual asset may not yet be populated; do not substitute another ID silently. "
+                    "If the requested model/material is not in the registry, do not invent one. "
                     "If the user gives a relative move, calculate it from the current object position. "
                     "Return scene edits only through the provided function. Current scene: "
                     + json.dumps(compact_scene, separators=(",", ":"))
+                    + " Asset registry: "
+                    + json.dumps(asset_context, separators=(",", ":"))
                 ),
             },
             {"role": "user", "content": prompt},
@@ -219,14 +273,24 @@ def prompt_to_batch(prompt: str, scene: dict[str, Any]) -> ScenePatchBatch:
     for item in response.output:
         if getattr(item, "type", None) == "function_call" and getattr(item, "name", None) == "apply_scene_patches":
             args = json.loads(item.arguments)
-            return ScenePatchBatch.model_validate(args)
+            batch = ScenePatchBatch.model_validate(args)
+            for patch in batch.patches:
+                validate_patch_assets(patch, registry)
+            return batch
 
     raise HTTPException(status_code=422, detail="The model did not produce a scene edit")
 
 
 @app.get("/health")
 def health() -> dict[str, Any]:
-    return {"ok": True, "scene": str(SCENE_PATH)}
+    registry = load_asset_registry()
+    return {
+        "ok": True,
+        "scene": str(SCENE_PATH),
+        "assetRegistry": str(ASSET_REGISTRY_PATH),
+        "models": len(registry.get("models", {})),
+        "materials": len(registry.get("materials", {})),
+    }
 
 
 @app.get("/api/scene")
@@ -234,10 +298,16 @@ def get_scene() -> dict[str, Any]:
     return load_scene()
 
 
+@app.get("/api/assets")
+def get_assets() -> dict[str, Any]:
+    return load_asset_registry()
+
+
 @app.post("/api/scene/patch")
 async def patch_scene(batch: ScenePatchBatch) -> dict[str, Any]:
     scene = load_scene()
-    apply_batch(scene, batch)
+    registry = load_asset_registry()
+    apply_batch(scene, batch, registry)
     save_scene(scene)
     await manager.broadcast({"type": "scene.updated", "scene": scene, "reason": batch.reason})
     return scene
@@ -246,8 +316,9 @@ async def patch_scene(batch: ScenePatchBatch) -> dict[str, Any]:
 @app.post("/api/scene/prompt")
 async def prompt_scene(request: PromptRequest) -> dict[str, Any]:
     scene = load_scene()
-    batch = prompt_to_batch(request.prompt, scene)
-    apply_batch(scene, batch)
+    registry = load_asset_registry()
+    batch = prompt_to_batch(request.prompt, scene, registry)
+    apply_batch(scene, batch, registry)
     save_scene(scene)
     await manager.broadcast({"type": "scene.updated", "scene": scene, "reason": batch.reason})
     return {"scene": scene, "applied": batch.model_dump()}
