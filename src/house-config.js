@@ -66,14 +66,14 @@ export const ROOMS = [
   { id:'wc', name:'Guest WC', x:1.05, z:-4.30, w:1.55, d:2.00, finish:'marble', ceiling:2.8 },
 ];
 
-// Presentation viewpoints used by the v40 UI. They are scene viewpoints,
-// not architectural dimensions, and may be tuned without changing the plan.
+// V45 positions hero-route cameras as architectural compositions rather than
+// neutral room-centre teleports. Values remain presentation-only.
 export const TELEPORTS = {
-  Entrance: [0.5, 1.65, 7.15, Math.PI],
-  Hallway: [0.45, 1.65, 3.75, Math.PI],
-  'Living Room': [4.20, 1.65, -1.60, -Math.PI/2],
-  Kitchen: [4.80, 1.65, 4.10, Math.PI],
-  'Dining Area': [6.45, 1.65, 0.55, Math.PI],
+  Entrance: [0.50, 1.65, 7.15, 0],
+  Hallway: [0.45, 1.65, 3.90, -0.42],
+  'Living Room': [1.85, 1.65, -0.15, -0.92],
+  Kitchen: [2.55, 1.65, 1.65, -2.10],
+  'Dining Area': [4.15, 1.65, -0.70, -2.07],
   'Master Bedroom': [-5.50, 1.65, -4.00, 0],
   Ensuite: [-1.35, 1.65, -4.15, 0],
   'Child Bedroom': [-7.40, 1.65, 4.00, 0],
@@ -81,8 +81,8 @@ export const TELEPORTS = {
   'Main Bathroom': [-3.15, 1.65, 4.20, 0],
   Office: [0.40, 1.65, 4.30, 0],
   Utility: [0.50, 1.65, 0.60, Math.PI],
-  'Terrace & Pool': [4.80, 1.65, -5.80, 0],
-  Garden: [-7.50, 1.65, -11.00, 0],
+  'Terrace & Pool': [4.80, 1.65, -5.75, 0],
+  Garden: [4.80, 1.65, -14.20, Math.PI],
 };
 
 export const HERO_ROUTE = [
