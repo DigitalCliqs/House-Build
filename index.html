@@ -23,15 +23,15 @@
     input[type=range] { accent-color:#f2d2a2; }
     #crosshair { position:absolute; left:50%; top:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border:1px solid rgba(255,255,255,.8); border-radius:50%; display:none; box-shadow:0 0 10px rgba(0,0,0,.45); }
     #badge { position:absolute; bottom:18px; left:18px; background:rgba(14,17,22,.68); border:1px solid rgba(255,255,255,.10); backdrop-filter:blur(10px); padding:9px 12px; border-radius:11px; font-size:12px; }
-    #sceneLabel { position:absolute; top:18px; left:18px; background:rgba(14,17,22,.58); border:1px solid rgba(255,255,255,.10); backdrop-filter:blur(10px); padding:9px 12px; border-radius:11px; font-size:12px; font-weight:650; }
+    #sceneLabel { position:absolute; top:18px; left:18px; max-width:min(760px,calc(100vw - 390px)); background:rgba(14,17,22,.58); border:1px solid rgba(255,255,255,.10); backdrop-filter:blur(10px); padding:9px 12px; border-radius:11px; font-size:12px; font-weight:650; line-height:1.4; }
     .value { min-width:44px; text-align:right; font-variant-numeric:tabular-nums; font-size:11px; opacity:.68; }
-    @media (max-width:700px){ .panel{top:10px;right:10px;width:min(305px,calc(100vw - 20px));padding:13px}.grid{grid-template-columns:1fr 1fr} #badge{left:10px;bottom:10px;max-width:calc(100vw - 20px)} #sceneLabel{left:10px;top:10px} }
+    @media (max-width:700px){ .panel{top:10px;right:10px;width:min(305px,calc(100vw - 20px));padding:13px}.grid{grid-template-columns:1fr 1fr} #badge{left:10px;bottom:10px;max-width:calc(100vw - 20px)} #sceneLabel{left:10px;top:auto;bottom:58px;max-width:calc(100vw - 40px)} }
   </style>
 </head>
 <body>
   <div id="hud">
     <div id="crosshair"></div>
-    <div id="sceneLabel">Finished concept v2 · EuroMax accessible villa + landscaped yard</div>
+    <div id="sceneLabel">Finished concept v3 · EuroMax accessible villa + landscaped yard</div>
     <div class="panel">
       <div class="title">Anamarija EuroMax — Finished Walkthrough</div>
       <div class="sub">Interactive finished-product visualisation: high ceilings, panoramic glazing, Calacatta-style marble, oak herringbone, architectural lighting, accessible circulation, landscaped ~1,200 m² plot, terrace/pergola and an 8 × 4 m pool.</div>
@@ -68,5 +68,6 @@
     <div id="badge">WASD move · Mouse look · Shift faster · Esc release · double-click a nearby door to toggle</div>
   </div>
   <script type="module" src="./src/viewer-v2.js"></script>
+  <script type="module" src="./src/presentation-v3.js"></script>
 </body>
 </html>
