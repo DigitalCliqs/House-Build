@@ -1,55 +1,12 @@
-// Editable architectural shell for the next-generation Anamarija walkthrough.
-import { ARCHITECTURE_SPEC } from './architecture-spec-v1.js';
+// Editable architectural shell generated from architecture-spec-v1.
+import {ARCHITECTURE_SPEC} from './architecture-spec-v1.js';
 export function createAnamarijaArchitectureShell({THREE,scene}={}){
- if(!THREE||!scene) throw new Error('THREE and scene are required');
- const {house:HOUSE,pool:POOL,rooms:ROOMS,site:SITE}=ARCHITECTURE_SPEC;
- const root=new THREE.Group(); root.name='anamarija-architecture-shell'; scene.add(root);
- const wallMat=new THREE.MeshStandardMaterial({color:0xf1eee8,roughness:.78});
- const ceilingMat=new THREE.MeshStandardMaterial({color:0xf8f5ef,roughness:.86,side:THREE.DoubleSide});
- const marbleMat=new THREE.MeshPhysicalMaterial({color:0xe9e6df,roughness:.28,clearcoat:.12,clearcoatRoughness:.22});
- const oakMat=new THREE.MeshStandardMaterial({color:0xa9794f,roughness:.58});
- const terraceMat=new THREE.MeshStandardMaterial({color:0xcfc9bf,roughness:.62});
- const glassMat=new THREE.MeshPhysicalMaterial({color:0xdce8ea,transmission:.9,transparent:true,opacity:.26,roughness:.035,ior:1.48,thickness:.012});
- const frameMat=new THREE.MeshStandardMaterial({color:0x25282a,roughness:.28,metalness:.55});
- const doorMat=new THREE.MeshStandardMaterial({color:0x9b704b,roughness:.46});
- const soffitMat=new THREE.MeshStandardMaterial({color:0xe8e2d8,roughness:.72});
- const waterMat=new THREE.MeshPhysicalMaterial({color:0x64b7c9,transmission:.18,transparent:true,opacity:.78,roughness:.08,clearcoat:.9});
- const landscapeMat=new THREE.MeshStandardMaterial({color:0x6f815e,roughness:1});
- const ownedMaterials=[wallMat,ceilingMat,marbleMat,oakMat,terraceMat,glassMat,frameMat,doorMat,soffitMat,waterMat,landscapeMat];
- function box(name,x,y,z,w,h,d,material,cast=true){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.name=name;m.position.set(x,y,z);m.castShadow=cast;m.receiveShadow=true;root.add(m);return m;}
- function buildWall(w){return w.axis==='x'?box(`wall:${w.id}`,(w.a+w.b)/2,w.height/2,w.fixed,Math.abs(w.b-w.a),w.height,w.thickness,wallMat):box(`wall:${w.id}`,w.fixed,w.height/2,(w.a+w.b)/2,w.thickness,w.height,Math.abs(w.b-w.a),wallMat);}
- function buildGlazing(g){
-  const width=Math.abs(g.b-g.a),c=(g.a+g.b)/2,y=g.height/2+.08,frame=.055,depth=.075;
-  if(g.axis==='x'){
-   box(`glazing:${g.id}:glass`,c,y,g.fixed,width,g.height,.028,glassMat,false);
-   box(`glazing:${g.id}:frame-left`,g.a,y,g.fixed,frame,g.height+.05,depth,frameMat);box(`glazing:${g.id}:frame-right`,g.b,y,g.fixed,frame,g.height+.05,depth,frameMat);box(`glazing:${g.id}:frame-top`,c,g.height+.08,g.fixed,width,frame,depth,frameMat);box(`glazing:${g.id}:sill`,c,.075,g.fixed,width,.045,.11,frameMat);
-   if(width>2.4) box(`glazing:${g.id}:mullion`,c,y,g.fixed,frame,g.height,depth,frameMat);
-  } else {
-   box(`glazing:${g.id}:glass`,g.fixed,y,c,.028,g.height,width,glassMat,false);
-   box(`glazing:${g.id}:frame-a`,g.fixed,y,g.a,depth,g.height+.05,frame,frameMat);box(`glazing:${g.id}:frame-b`,g.fixed,y,g.b,depth,g.height+.05,frame,frameMat);box(`glazing:${g.id}:frame-top`,g.fixed,g.height+.08,c,depth,frame,width,frameMat);
-  }
- }
- function wallHeightAt(o){const adjacent=ARCHITECTURE_SPEC.walls.filter(w=>w.axis===o.axis&&Math.abs(w.fixed-o.fixed)<.03);return adjacent.length?Math.max(...adjacent.map(w=>w.height)):3.05;}
- function buildOpening(o){
-  const wallHeight=wallHeightAt(o),headH=Math.max(0,wallHeight-o.height),width=Math.abs(o.b-o.a),c=(o.a+o.b)/2,t=.20,j=.065;
-  if(headH>.01){if(o.axis==='x')box(`opening:${o.id}:head`,c,o.height+headH/2,o.fixed,width,headH,t,wallMat);else box(`opening:${o.id}:head`,o.fixed,o.height+headH/2,c,t,headH,width,wallMat);}
-  // All openings get a proper jamb/head frame but remain physically open unless the spec explicitly marks a closed leaf.
-  if(o.axis==='x'){
-   box(`opening:${o.id}:jamb-a`,o.a,o.height/2,o.fixed,j,o.height,.13,frameMat);box(`opening:${o.id}:jamb-b`,o.b,o.height/2,o.fixed,j,o.height,.13,frameMat);box(`opening:${o.id}:frame-head`,c,o.height,o.fixed,width,j,.13,frameMat);
-   if(o.closed===true) box(`opening:${o.id}:leaf`,c,o.height/2,o.fixed,width-.08,o.height-.06,.045,doorMat);
-  }else{
-   box(`opening:${o.id}:jamb-a`,o.fixed,o.height/2,o.a,.13,o.height,j,frameMat);box(`opening:${o.id}:jamb-b`,o.fixed,o.height/2,o.b,.13,o.height,j,frameMat);box(`opening:${o.id}:frame-head`,o.fixed,o.height,c,.13,j,width,frameMat);
-   if(o.closed===true) box(`opening:${o.id}:leaf`,o.fixed,o.height/2,c,.045,o.height-.06,width-.08,doorMat);
-  }
- }
- box('site-ground',0,-.19,0,SITE.width,.30,SITE.depth,landscapeMat,false);box('house-slab',0,.02,HOUSE.z,HOUSE.width,.10,HOUSE.depth,marbleMat,false);
- for(const room of ROOMS) box(`floor:${room.id}`,room.x,.085,room.z+HOUSE.z,room.w,.025,room.d,room.finish==='wood'?oakMat:marbleMat,false);
- const terrace=ARCHITECTURE_SPEC.terrace;box('terrace',terrace.x,terrace.level,terrace.z,terrace.width,.075,terrace.depth,terraceMat,false);
- for(const wall of ARCHITECTURE_SPEC.walls)buildWall(wall);for(const glazing of ARCHITECTURE_SPEC.glazing)buildGlazing(glazing);for(const opening of ARCHITECTURE_SPEC.openings)buildOpening(opening);
- for(const c of ARCHITECTURE_SPEC.ceilings||[]) box(`ceiling:${c.id}`,c.x,c.height+c.thickness/2,c.z,c.width,c.thickness,c.depth,ceilingMat,false);
- // Covered terrace/entrance soffits visually close the sheltered external zones while keeping circulation openings clear.
- box('soffit:terrace',terrace.x,3.08,terrace.z,terrace.width,.12,Math.min(2.15,terrace.depth),soffitMat,false);
- const entrance=ARCHITECTURE_SPEC.openings.find(o=>o.id==='front-entrance');if(entrance)box('soffit:entrance',(entrance.a+entrance.b)/2,3.08,entrance.fixed+.72,Math.max(2.5,entrance.clearWidth+1.1),.12,1.45,soffitMat,false);
- box('pool-shell',POOL.x,-.13,POOL.z,POOL.width+.35,.25,POOL.depth+.35,terraceMat,false);box('pool-water',POOL.x,.015,POOL.z,POOL.width,.035,POOL.depth,waterMat,false);
- root.updateMatrixWorld(true);return{root,spec:ARCHITECTURE_SPEC,dispose(){root.traverse(n=>n.geometry?.dispose?.());for(const m of ownedMaterials)m.dispose();scene.remove(root);}};
-}
+ if(!THREE||!scene)throw new Error('THREE and scene are required');const {house:HOUSE,pool:POOL,rooms:ROOMS,site:SITE}=ARCHITECTURE_SPEC;const root=new THREE.Group();root.name='anamarija-architecture-shell';scene.add(root);
+ const wallMat=new THREE.MeshStandardMaterial({color:0xf1eee8,roughness:.78}),ceilingMat=new THREE.MeshStandardMaterial({color:0xf8f5ef,roughness:.86,side:THREE.DoubleSide}),marbleMat=new THREE.MeshPhysicalMaterial({color:0xe9e6df,roughness:.28,clearcoat:.12}),oakMat=new THREE.MeshStandardMaterial({color:0xa9794f,roughness:.58}),terraceMat=new THREE.MeshStandardMaterial({color:0xcfc9bf,roughness:.62}),glassMat=new THREE.MeshPhysicalMaterial({color:0xd8e8ec,transmission:.92,transparent:true,opacity:.26,roughness:.035,ior:1.48,thickness:.018}),frameMat=new THREE.MeshStandardMaterial({color:0x242729,roughness:.30,metalness:.48}),waterMat=new THREE.MeshPhysicalMaterial({color:0x64b7c9,transparent:true,opacity:.78,roughness:.08,clearcoat:.9}),landscapeMat=new THREE.MeshStandardMaterial({color:0x6f815e,roughness:1}),roofMat=new THREE.MeshStandardMaterial({color:0x303236,roughness:.68,metalness:.04,side:THREE.DoubleSide}),stoneMat=new THREE.MeshStandardMaterial({color:0x8f8a82,roughness:.88}),soffitMat=new THREE.MeshStandardMaterial({color:0xe8e4dc,roughness:.82});
+ const mats=[wallMat,ceilingMat,marbleMat,oakMat,terraceMat,glassMat,frameMat,waterMat,landscapeMat,roofMat,stoneMat,soffitMat];
+ function box(n,x,y,z,w,h,d,m,cast=true){const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);q.name=n;q.position.set(x,y,z);q.castShadow=cast;q.receiveShadow=true;root.add(q);return q}
+ function wall(w){return w.axis==='x'?box(`wall:${w.id}`,(w.a+w.b)/2,w.height/2,w.fixed,Math.abs(w.b-w.a),w.height,w.thickness,wallMat):box(`wall:${w.id}`,w.fixed,w.height/2,(w.a+w.b)/2,w.thickness,w.height,Math.abs(w.b-w.a),wallMat)}
+ function glazing(g){if(g.axis!=='x')return;const w=Math.abs(g.b-g.a),x=(g.a+g.b)/2,y=g.height/2+.08;box(`glazing:${g.id}:glass`,x,y,g.fixed,w,g.height,.025,glassMat,false);for(const [n,xx] of [['left',g.a],['right',g.b]])box(`glazing:${g.id}:${n}`,xx,y,g.fixed,.065,g.height+.08,.10,frameMat);box(`glazing:${g.id}:top`,x,g.height+.10,g.fixed,w,.065,.10,frameMat);box(`glazing:${g.id}:sill`,x,.08,g.fixed,w,.05,.12,frameMat);if(w>2.4)box(`glazing:${g.id}:mullion`,x,y,g.fixed,.055,g.height,.09,frameMat)}
+ function opening(o){const adj=ARCHITECTURE_SPEC.walls.filter(w=>w.axis===o.axis&&Math.abs(w.fixed-o.fixed)<.03),wh=adj.length?Math.max(...adj.map(w=>w.height)):3.05,hh=Math.max(0,wh-o.height),w=Math.abs(o.b-o.a),x=(o.a+o.b)/2;if(hh>.01)box(`opening:${o.id}:head`,x,o.height+hh/2,o.fixed,w,hh,.20,wallMat);box(`opening:${o.id}:jambL`,o.a,o.height/2,o.fixed,.065,o.height,.22,frameMat);box(`opening:${o.id}:jambR`,o.b,o.height/2,o.fixed,.065,o.height,.22,frameMat);box(`opening:${o.id}:lintel`,x,o.height,o.fixed,w,.065,.22,frameMat)}
+ function roofVolume(v){const e=ARCHITECTURE_SPEC.roof.eaveHeight,o=ARCHITECTURE_SPEC.roof.overhang,w=v.width+o*2,d=v.depth+o*2,r=v.ridgeHeight;const verts=[],faces=[];if(v.ridgeAxis==='z'){const z0=v.z-d/2,z1=v.z+d/2,x0=v.x-w/2,x1=v.x+w/2;verts.push(x0,e,z0, v.x,r,z0, v.x,r,z1, x0,e,z1, v.x,r,z0, x1,e,z0, x1,e,z1, v.x,r,z1, x0,e,z0,x1,e,z0,v.x,r,z0, x0,e,z1,v.x,r,z1,x1,e,z1);faces.push(0,1,2,0,2,3,4,5,6,4,6,7,8,9,10,11,12,13)}else{const z0=v.z-d/2,z1=v.z+d/2,x0=v.x-w/2,x1=v.x+w/2;verts.push(x0,e,z0,x0,r,v.z,x1,r,v.z,x1,e,z0, x0,r,v.z,x0,e,z1,x1,e,z1,x1,r,v.z, x0,e,z0,x0,e,z1,x0,r,v.z, x1,e,z0,x1,r,v.z,x1,e,z1);faces.push(0,1,2,0,2,3,4,5,6,4,6,7,8,9,10,11,12,13)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));g.setIndex(faces);g.computeVertexNormals();const m=new THREE.Mesh(g,roofMat);m.name=`roof:${v.id}`;m.castShadow=m.receiveShadow=true;root.add(m);box(`soffit:${v.id}`,v.x,e-.055,v.z,w,.08,d,soffitMat,false);const gy=e-.10;box(`gutter:${v.id}:north`,v.x,gy,v.z+d/2,w,.07,.09,frameMat);box(`gutter:${v.id}:south`,v.x,gy,v.z-d/2,w,.07,.09,frameMat)}
+ box('site-ground',0,-.19,0,SITE.width,.30,SITE.depth,landscapeMat,false);box('house-slab',0,.02,HOUSE.z,HOUSE.width,.10,HOUSE.depth,marbleMat,false);for(const r of ROOMS)box(`floor:${r.id}`,r.x,.085,r.z+HOUSE.z,r.w,.025,r.d,r.finish==='wood'?oakMat:marbleMat,false);const t=ARCHITECTURE_SPEC.terrace;box('terrace',t.x,t.level,t.z,t.width,.075,t.depth,terraceMat,false);ARCHITECTURE_SPEC.walls.forEach(wall);ARCHITECTURE_SPEC.glazing.forEach(glazing);ARCHITECTURE_SPEC.openings.forEach(opening);for(const c of ARCHITECTURE_SPEC.ceilings||[])box(`ceiling:${c.id}`,c.x,c.height+c.thickness/2,c.z,c.width,c.thickness,c.depth,ceilingMat,false);for(const a of ARCHITECTURE_SPEC.facade?.accents||[])box(`facade:${a.id}`,a.x,a.height/2,a.z,a.width,a.height,.08,stoneMat);for(const v of ARCHITECTURE_SPEC.roof?.volumes||[])roofVolume(v);box('pool-shell',POOL.x,-.13,POOL.z,POOL.width+.35,.25,POOL.depth+.35,terraceMat,false);box('pool-water',POOL.x,.015,POOL.z,POOL.width,.035,POOL.depth,waterMat,false);root.updateMatrixWorld(true);return{root,spec:ARCHITECTURE_SPEC,dispose(){root.traverse(n=>n.geometry?.dispose?.());mats.forEach(m=>m.dispose());scene.remove(root)}}}
